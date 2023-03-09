@@ -1,0 +1,12 @@
+{
+  "WSL 2 Ubuntu-Preview": {
+    "commandName": "WSL",
+    "launchBrowser": true,
+    "launchUrl": "https://localhost:5001",
+    "environmentVariables": {
+      "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:5000",
+      "ASPNETCORE_ENVIRONMENT": "Development"
+    },
+    "distributionName": "Ubuntu-Preview"
+  }
+}

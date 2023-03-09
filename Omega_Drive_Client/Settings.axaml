@@ -1,0 +1,84 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="340" d:DesignHeight="400"
+        x:Class="Omega_Drive_Client.Settings"
+        Title="Settings" MaxHeight="400" MaxWidth="340" TransparencyLevelHint="Transparent" Background="Transparent" Opacity="0.6">
+	
+	<Window.Styles>
+		<Style Selector="TextBlock.TextBlock_Propriety">
+			<Setter Property="Foreground">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+						<GradientStop Color="#448DC2" Offset="0"/>
+						<GradientStop Color="#43D3F7" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Styles>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Rectangle Grid.ColumnSpan="9" Grid.RowSpan="9" Opacity="0.9">
+			<Rectangle.Fill>
+				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+					<GradientStop Color="#448DC2" Offset="0"/>
+					<GradientStop Color="#20435C" Offset="1"/>
+				</LinearGradientBrush>
+			</Rectangle.Fill>
+		</Rectangle>
+		
+		<TextBlock Classes="TextBlock_Propriety" Grid.RowSpan="2" Grid.ColumnSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontWeight="Bold" FontSize="30" Text="Settings"/>
+
+		<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="9">
+			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Server IP address"/>
+			
+			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+				<TextBox Text="127.0.0.0"/>
+			</StackPanel>
+		</StackPanel>
+
+		
+		<StackPanel Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="9">
+			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Server port number"/>
+			<TextBox HorizontalAlignment="Center" VerticalAlignment="Center" Text="1023"/>
+		</StackPanel>
+		
+		
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="9">
+			<TextBlock Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Load trusted server SSL&#x0a;Certificate Authority"/>
+			
+			<Button Height="40" Width="40" Margin="20,0,0,0">
+				<Button.Content>
+					<Image Height="40" Width="40" Source="/Assets/Download_Arrow.png"/>
+				</Button.Content>
+			</Button>
+		</StackPanel>
+		
+	</Grid>
+</Window>
