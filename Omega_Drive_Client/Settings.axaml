@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="340" d:DesignHeight="400"
         x:Class="Omega_Drive_Client.Settings"
-        Title="Settings" MaxHeight="400" MaxWidth="340" TransparencyLevelHint="Transparent" Background="Transparent" Opacity="0.6">
+        Title="Settings" MaxHeight="400" MinHeight="400" MaxWidth="340" MinWidth="340" TransparencyLevelHint="Transparent" Background="Transparent" Opacity="0.6" CanResize="False" Initialized="Window_Initialised">
 	
 	<Window.Styles>
 		<Style Selector="TextBlock.TextBlock_Propriety">
@@ -53,27 +53,28 @@
 			</Rectangle.Fill>
 		</Rectangle>
 		
-		<TextBlock Classes="TextBlock_Propriety" Grid.RowSpan="2" Grid.ColumnSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontWeight="Bold" FontSize="30" Text="Settings"/>
+		<TextBlock Classes="TextBlock_Propriety" Grid.RowSpan="2" Grid.ColumnSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontWeight="Bold" FontSize="20" Text="Settings"/>
 
 		<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Server IP address"/>
 			
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-				<TextBox Text="127.0.0.0"/>
+				<TextBox Name="IP_TextBox" Text="127.0.0.0" PropertyChanged="IP_TextBox_PropertyChanged"/>
+			
 			</StackPanel>
 		</StackPanel>
 
 		
 		<StackPanel Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Server port number"/>
-			<TextBox HorizontalAlignment="Center" VerticalAlignment="Center" Text="1023"/>
+			<TextBox Name="Port_TextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Text="1023" PropertyChanged="Port_TextBox_PropertyChanged"/>
 		</StackPanel>
 		
 		
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			<TextBlock Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Load trusted server SSL&#x0a;Certificate Authority"/>
 			
-			<Button Height="40" Width="40" Margin="20,0,0,0">
+			<Button Height="40" Width="40" Margin="20,0,0,0" Click="Load_SSL_Certificate">
 				<Button.Content>
 					<Image Height="40" Width="40" Source="/Assets/Download_Arrow.png"/>
 				</Button.Content>
