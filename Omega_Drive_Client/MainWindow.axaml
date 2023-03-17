@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Omega_Drive_Client.MainWindow"
-        Title="Omega_Drive_Client">
+        Title="Omega_Drive_Client" Initialized="Window_Initialized" Opened="Window_Opened">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
@@ -30,7 +30,7 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 		
-		
+		<TextBlock Name="TEST" Grid.ColumnSpan="9" Grid.RowSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 		
 	</Grid>
 </Window>

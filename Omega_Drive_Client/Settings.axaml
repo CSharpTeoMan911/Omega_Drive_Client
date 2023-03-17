@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="340" d:DesignHeight="400"
         x:Class="Omega_Drive_Client.Settings"
-        Title="Settings" MaxHeight="400" MinHeight="400" MaxWidth="340" MinWidth="340" TransparencyLevelHint="Transparent" Background="Transparent" Opacity="0.6" CanResize="False" Initialized="Window_Initialised">
+        Title="Settings" MaxHeight="400" MinHeight="400" MaxWidth="340" MinWidth="340" TransparencyLevelHint="Transparent" Background="Transparent" Opacity="0.6" CanResize="False" Opened="Window_Opened">
 	
 	<Window.Styles>
 		<Style Selector="TextBlock.TextBlock_Propriety">
@@ -42,9 +42,10 @@
 			<RowDefinition/>
 			<RowDefinition/>
 			<RowDefinition/>
+			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Rectangle Grid.ColumnSpan="9" Grid.RowSpan="9" Opacity="0.9">
+		<Rectangle Grid.ColumnSpan="9" Grid.RowSpan="10" Opacity="0.9">
 			<Rectangle.Fill>
 				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
 					<GradientStop Color="#448DC2" Offset="0"/>
@@ -55,23 +56,52 @@
 		
 		<TextBlock Classes="TextBlock_Propriety" Grid.RowSpan="2" Grid.ColumnSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontWeight="Bold" FontSize="20" Text="Settings"/>
 
+		
 		<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="9">
+			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="SSL Protocol"/>
+
+			
+			
+			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+				
+				<Button VerticalAlignment="Center" Margin="0,0,10,0" Click="Previous_Protocol">
+					<Button.Content>
+						<Image Height="25" Width="25" Source="/Assets/Left_Arrow.png"/>
+					</Button.Content>
+				</Button>
+				
+				<TextBlock Name="Current_Protocol_TextBlock" Classes="TextBlock_Propriety" VerticalAlignment="Center"/>
+
+				<Button VerticalAlignment="Center" Margin="10,0,0,0" Click="Next_Protocol">
+					<Button.Content>
+						<Image Height="25" Width="25" Source="/Assets/Right_Arrow.png"/>
+					</Button.Content>
+				</Button>
+				
+			</StackPanel>
+		</StackPanel>
+		
+		
+		
+		
+		<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="9">
+			
 			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Server IP address"/>
 			
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-				<TextBox Name="IP_TextBox" Text="127.0.0.0" PropertyChanged="IP_TextBox_PropertyChanged"/>
-			
+				<TextBox Name="IP_TextBox" MaxWidth="135"  LostFocus="IP_TextBox_Lost_Focus"/>
 			</StackPanel>
+			
 		</StackPanel>
 
 		
-		<StackPanel Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="9">
+		<StackPanel Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Server port number"/>
-			<TextBox Name="Port_TextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Text="1023" PropertyChanged="Port_TextBox_PropertyChanged"/>
+			<TextBox Name="Port_TextBox" MaxWidth="10" HorizontalAlignment="Center" VerticalAlignment="Center" LostFocus="Port_TextBox_Lost_Focus"/>
 		</StackPanel>
 		
 		
-		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="9">
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="8" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			<TextBlock Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Load trusted server SSL&#x0a;Certificate Authority"/>
 			
 			<Button Height="40" Width="40" Margin="20,0,0,0" Click="Load_SSL_Certificate">

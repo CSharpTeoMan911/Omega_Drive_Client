@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Media;
 using Avalonia.Threading;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -9,7 +10,7 @@ namespace Omega_Drive_Client
 {
     public partial class MainWindow : Window
     {
-
+        public static string TEST_RESULT;
         private static List<Files> database_files = new List<Files>();
 
 
@@ -32,6 +33,16 @@ namespace Omega_Drive_Client
             InitializeComponent();
         }
 
+
+        private void Window_Initialized(object sender, EventArgs e)
+        {
+            //TEST.Text = TEST_RESULT;
+        }
+
+        private void Window_Opened(object sender, EventArgs e)
+        {
+            TEST.Text = TEST_RESULT;
+        }
 
     }
 }
