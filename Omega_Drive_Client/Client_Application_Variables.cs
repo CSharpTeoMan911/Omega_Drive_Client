@@ -17,11 +17,14 @@ namespace Omega_Drive_Client
 
         protected static int port_number = 1024;
 
-        protected static List<string> list_of_available_protocols = new List<string>() { "Tls 1.2", "Tls 1.1", "Tls", "Ssl V3", "Ssl V2" };
+        protected static List<string> list_of_available_protocols = new List<string>() { "Tls 1.3", "Tls 1.2", "Tls 1.1", "Tls", "Ssl V3", "Ssl V2" };
 
         protected static int current_protocol = 0; 
 
-        protected static System.Security.Authentication.SslProtocols ssl_protocol = System.Security.Authentication.SslProtocols.Tls12;
+        protected static System.Security.Authentication.SslProtocols ssl_protocol = System.Security.Authentication.SslProtocols.Tls13;
+
+
+
 
         protected static async Task<bool> Create_Application_Settings_File()
         {
