@@ -7,14 +7,7 @@ namespace Omega_Drive_Client
 {
     public partial class Log_In__Or__Register : Window
     {
-
-        private sealed class Server_Connections_Mitigator:Server_Connections
-        {
-            internal static async Task<byte[]> Secure_Server_Connections_Initiator()
-            {
-                return await Secure_Server_Connections();
-            }
-        }
+        private static Server_Connections server_connections = new Server_Connections();
 
 
 
@@ -43,7 +36,7 @@ namespace Omega_Drive_Client
 
         private async void Log_In_User(object sender, RoutedEventArgs e)
         {
-            await Server_Connections_Mitigator.Secure_Server_Connections_Initiator();
+            await server_connections.Secure_Server_Connections();
         }
 
         private void Keep_User_Logged_In(object sender, RoutedEventArgs e)

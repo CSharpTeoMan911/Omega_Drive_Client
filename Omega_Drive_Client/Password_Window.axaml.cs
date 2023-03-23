@@ -7,17 +7,13 @@ namespace Omega_Drive_Client
 {
     public partial class Password_Window : Window
     {
+        private static Application_Cryptographic_Services application_cryptographic_services = new Application_Cryptographic_Services();
+
         private string Option;
         private string Path;
 
 
-        private sealed class Application_Cryptographic_Services_Mitigator : Application_Cryptographic_Services
-        {
-            internal static async Task<bool> Load_Certificate_Authority_Initiator(string certificate_path, string password)
-            {
-                return await Load_Certificate_Authority(certificate_path, password);
-            }
-        }
+
 
 
         public Password_Window()
@@ -57,7 +53,7 @@ namespace Omega_Drive_Client
             switch (Option)
             {
                 case "Ssl Certificate":
-                    bool cetificate_upload_result = await Application_Cryptographic_Services_Mitigator.Load_Certificate_Authority_Initiator(Path, Password_TextBox.Text);
+                    bool cetificate_upload_result = await application_cryptographic_services.Load_Certificate_Authority(Path, Password_TextBox.Text);
 
                     if(cetificate_upload_result == true)
                     {

@@ -95,7 +95,7 @@ namespace Omega_Drive_Client
                     switch (current_selected_protocol)
                     {
                         case "Tls 1.3":
-                            ssl_protocol = System.Security.Authentication.SslProtocols.Tls12;
+                            ssl_protocol = System.Security.Authentication.SslProtocols.Tls13;
                             break;
 
                         case "Tls 1.2":

@@ -8,7 +8,7 @@ namespace Omega_Drive_Client
 {
     class Application_Cryptographic_Services
     {
-        protected static Task<bool> Load_Certificate_Authority(string certificate_path, string password)
+        internal Task<bool> Load_Certificate_Authority(string certificate_path, string password)
         {
             try
             {
