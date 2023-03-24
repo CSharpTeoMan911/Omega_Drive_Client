@@ -26,6 +26,52 @@ namespace Omega_Drive_Client
 
 
 
+
+        internal static Task<string> Set_Current_Protocol()
+        {
+            string current_selected_protocol = String.Empty;
+
+            lock (list_of_available_protocols)
+            {
+                current_selected_protocol = list_of_available_protocols[current_protocol];
+
+                switch (current_selected_protocol)
+                {
+                    case "Tls 1.3":
+                        ssl_protocol = System.Security.Authentication.SslProtocols.Tls13;
+                        break;
+
+                    case "Tls 1.2":
+                        ssl_protocol = System.Security.Authentication.SslProtocols.Tls12;
+                        break;
+
+                    case "Tls 1.1":
+                        ssl_protocol = System.Security.Authentication.SslProtocols.Tls11;
+                        break;
+
+                    case "Tls":
+                        ssl_protocol = System.Security.Authentication.SslProtocols.Tls;
+                        break;
+
+                    case "Ssl V3":
+#pragma warning disable CS0618 // Type or member is obsolete
+                        ssl_protocol = System.Security.Authentication.SslProtocols.Ssl3;
+#pragma warning restore CS0618 // Type or member is obsolete
+                        break;
+
+                    case "Ssl V2":
+#pragma warning disable CS0618 // Type or member is obsolete
+                        ssl_protocol = System.Security.Authentication.SslProtocols.Ssl2;
+#pragma warning restore CS0618 // Type or member is obsolete
+                        break;
+                }
+            }
+
+            return Task.FromResult(current_selected_protocol);
+        }
+
+
+
         protected static async Task<bool> Create_Application_Settings_File()
         {
             if(System.IO.File.Exists(file_name) == false)
@@ -33,6 +79,8 @@ namespace Omega_Drive_Client
                 application_Settings.IP_ADDRESS = ip_address.ToString();
                 application_Settings.PORT_NUMBER = port_number.ToString();
                 application_Settings.PROTOCOL_INDEX = current_protocol.ToString();
+
+                await Set_Current_Protocol();
 
                 byte[] json_formated_settings = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(application_Settings, Newtonsoft.Json.Formatting.Indented));
 
@@ -83,6 +131,8 @@ namespace Omega_Drive_Client
                     ip_address = address;
                     port_number = Convert.ToInt32(application_Settings.PORT_NUMBER);
                     current_protocol = Convert.ToInt32(application_Settings.PROTOCOL_INDEX);
+
+                    await Set_Current_Protocol();
                 }
                 catch
                 {

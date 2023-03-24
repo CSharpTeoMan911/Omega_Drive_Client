@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using System;
+using System.Threading.Tasks;
 
 namespace Omega_Drive_Client
 {

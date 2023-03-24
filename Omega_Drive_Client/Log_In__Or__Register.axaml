@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
         x:Class="Omega_Drive_Client.Log_In__Or__Register"
-        Title="Authentification" CanResize="False" Background="Transparent" MaxHeight="500" MinHeight="500" MaxWidth="400" MinWidth="400" TransparencyLevelHint="Transparent" Opacity="0.6" Icon="/Assets/Omega_Drive.png" Initialized="Window_Initialized">
+        Title="Authentification" CanResize="False" Background="Transparent" MaxHeight="500" MinHeight="500" MaxWidth="400" MinWidth="400" TransparencyLevelHint="Transparent" Opacity="0.6" Icon="/Assets/Omega_Drive.png" Opened="Window_Opened">
 
 	<Window.Styles>
 		<Style Selector="Button.Transparent">
