@@ -11,7 +11,7 @@ namespace Omega_Drive_Client
     {
 
 
-        public async Task<byte[]> Serialize_Payload<Password___Or___Binary_File>(string function, string email___or___log_in_session_key___or___account_validation_key, Password___Or___Binary_File password___or___binary_file)
+        public async Task<byte[]> Serialize_Payload(string function, string email___or___log_in_session_key___or___account_validation_key, byte[] password___or___binary_file)
         {
             byte[] serialized_payload = new byte[1024];
 
@@ -23,16 +23,7 @@ namespace Omega_Drive_Client
                 Client_WSDL_Payload client_WSDL_Payload = new Client_WSDL_Payload();
                 client_WSDL_Payload.Function = Convert.ToBase64String(Encoding.UTF8.GetBytes(function));
                 client_WSDL_Payload.Email___Or___Log_In_Session_Key___Or___Account_Validation_Key = Convert.ToBase64String(Encoding.UTF8.GetBytes(email___or___log_in_session_key___or___account_validation_key));
-
-                if (password___or___binary_file.GetType() == typeof(byte[]))
-                {
-                    client_WSDL_Payload.Password___Or___Binary_Content = Convert.ToBase64String(password___or___binary_file as byte[]);
-                }
-                else
-                {
-                    client_WSDL_Payload.Password___Or___Binary_Content = Convert.ToBase64String(Encoding.UTF8.GetBytes(password___or___binary_file as string));
-                }
-
+                client_WSDL_Payload.Password___Or___Binary_Content = password___or___binary_file;
 
 
                 System.Xml.Serialization.XmlSerializer payload_serialiser = new System.Xml.Serialization.XmlSerializer(client_WSDL_Payload.GetType());
@@ -76,8 +67,6 @@ namespace Omega_Drive_Client
             {
                 System.Xml.Serialization.XmlSerializer payload_deserialiser = new System.Xml.Serialization.XmlSerializer(server_WSDL_Payload.GetType());
                 server_WSDL_Payload = (Server_WSDL_Payload)payload_deserialiser?.Deserialize(payload_stream);
-
-                server_WSDL_Payload.Server_Payload = Encoding.UTF8.GetString(Convert.FromBase64String(server_WSDL_Payload.Server_Payload));
             }
             catch (Exception E)
             {

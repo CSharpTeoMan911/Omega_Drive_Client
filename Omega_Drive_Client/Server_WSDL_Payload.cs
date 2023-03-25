@@ -8,6 +8,6 @@ namespace Omega_Drive_Client
 {
     public class Server_WSDL_Payload
     {
-        public string Server_Payload;
+        public byte[] Server_Payload;
     }
 }

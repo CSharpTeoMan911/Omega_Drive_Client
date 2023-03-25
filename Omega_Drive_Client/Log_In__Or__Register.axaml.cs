@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using System.Threading.Tasks;
 using System.Text;
 using System.Drawing;
+using System.Security.AccessControl;
 
 namespace Omega_Drive_Client
 {
@@ -56,13 +57,11 @@ namespace Omega_Drive_Client
 
             byte[] image = System.IO.File.ReadAllBytes("Test_Image.jpg");
 
-            byte[] serialized_client_payload = await client_payload.Serialize_Payload<string>("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetString(image));
+            byte[] serialized_client_payload = await client_payload.Serialize_Payload("Log in", Log_In_Email_TextBox.Text, image);
             byte[] serialized_server_payload = await server_connections.Secure_Server_Connections(serialized_client_payload);
 
-            Server_WSDL_Payload server_WSDL_Payload = await client_payload.Deserialize_Payload(serialized_server_payload);
 
-            System.IO.File.WriteAllBytes("Test_Image_Result.jpg", Encoding.UTF8.GetBytes(server_WSDL_Payload.Server_Payload));
-
+            Server_WSDL_Payload deserialized_server_payload = await client_payload.Deserialize_Payload(serialized_server_payload);
         }
 
         private void Keep_User_Logged_In(object sender, RoutedEventArgs e)
