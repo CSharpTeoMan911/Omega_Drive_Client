@@ -2,6 +2,8 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Threading.Tasks;
+using System.Text;
+using System.Drawing;
 
 namespace Omega_Drive_Client
 {
@@ -25,6 +27,13 @@ namespace Omega_Drive_Client
 
         private async void Window_Opened(object sender, EventArgs e)
         {
+            Log_In_Email_TextBox.Text = String.Empty;
+            Log_In_Password_TextBox.Text = String.Empty;
+
+            Register_Email_TextBox.Text = String.Empty;
+            Register_Password_TextBox.Text = String.Empty;
+            Register_Repeat_Password_TextBox.Text = String.Empty;
+
             await Client_Application_Variables_Mitigator.Load_Application_File_Settings_Initiator();
         }
 
@@ -44,12 +53,16 @@ namespace Omega_Drive_Client
 
         private async void Log_In_User(object sender, RoutedEventArgs e)
         {
-            byte[] serialized_client_payload = await client_payload.Serialize_Payload<string>("Log in", Log_In_Email_TextBox.Text, Log_In_Password_TextBox.Text);
+
+            byte[] image = System.IO.File.ReadAllBytes("Test_Image.jpg");
+
+            byte[] serialized_client_payload = await client_payload.Serialize_Payload<string>("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetString(image));
             byte[] serialized_server_payload = await server_connections.Secure_Server_Connections(serialized_client_payload);
 
             Server_WSDL_Payload server_WSDL_Payload = await client_payload.Deserialize_Payload(serialized_server_payload);
 
-            System.Diagnostics.Debug.WriteLine("SERVER PAYLOAD IS: " + server_WSDL_Payload.Server_Payload);
+            System.IO.File.WriteAllBytes("Test_Image_Result.jpg", Encoding.UTF8.GetBytes(server_WSDL_Payload.Server_Payload));
+
         }
 
         private void Keep_User_Logged_In(object sender, RoutedEventArgs e)

@@ -16,7 +16,7 @@ namespace Omega_Drive_Client
             byte[] serialized_payload = new byte[1024];
 
 
-            System.IO.MemoryStream payload_stream = new System.IO.MemoryStream();
+            System.IO.StringWriter payload_stream = new StringWriter_Encoding();
 
             try
             {
@@ -38,12 +38,11 @@ namespace Omega_Drive_Client
                 System.Xml.Serialization.XmlSerializer payload_serialiser = new System.Xml.Serialization.XmlSerializer(client_WSDL_Payload.GetType());
                 payload_serialiser.Serialize(payload_stream, client_WSDL_Payload);
 
-                serialized_payload = payload_stream.ToArray();
+                serialized_payload = Encoding.UTF8.GetBytes(payload_stream.ToString());
                 await payload_stream.FlushAsync();
             }
             catch (Exception E)
             {
-
                 if (payload_stream != null)
                 {
                     payload_stream.Close();

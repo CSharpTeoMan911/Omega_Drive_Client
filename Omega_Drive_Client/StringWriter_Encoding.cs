@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Omega_Drive_Client
 {
-    public class Server_WSDL_Payload
+    internal class StringWriter_Encoding:StringWriter
     {
-        public string Server_Payload;
+        public override Encoding Encoding => Encoding.UTF8;
     }
 }

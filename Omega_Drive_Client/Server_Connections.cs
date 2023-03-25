@@ -115,6 +115,8 @@ namespace Omega_Drive_Client
 
                             int total_bytes_read = 0;
 
+                            total_bytes_read += await client_secure_socket_layer_stream.ReadAsync(server_payload, total_bytes_read, server_payload.Length - total_bytes_read);
+
                             while (total_bytes_read < server_payload.Length)
                             {
                                 total_bytes_read += await client_secure_socket_layer_stream.ReadAsync(server_payload, total_bytes_read, server_payload.Length - total_bytes_read);
