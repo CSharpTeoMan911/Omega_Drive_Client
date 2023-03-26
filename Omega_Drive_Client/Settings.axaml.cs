@@ -92,35 +92,13 @@ namespace Omega_Drive_Client
                 {
                     current_selected_protocol = list_of_available_protocols[current_protocol];
 
-                    switch (current_selected_protocol)
+                    if (current_selected_protocol == "Tls 1.3")
                     {
-                        case "Tls 1.3":
-                            ssl_protocol = System.Security.Authentication.SslProtocols.Tls13;
-                            break;
-
-                        case "Tls 1.2":
-                            ssl_protocol = System.Security.Authentication.SslProtocols.Tls12;
-                            break;
-
-                        case "Tls 1.1":
-                            ssl_protocol = System.Security.Authentication.SslProtocols.Tls11;
-                            break;
-
-                        case "Tls":
-                            ssl_protocol = System.Security.Authentication.SslProtocols.Tls;
-                            break;
-
-                        case "Ssl V3":
-                            #pragma warning disable CS0618 // Type or member is obsolete
-                            ssl_protocol = System.Security.Authentication.SslProtocols.Ssl3;
-                            #pragma warning restore CS0618 // Type or member is obsolete
-                            break;
-
-                        case "Ssl V2":
-                            #pragma warning disable CS0618 // Type or member is obsolete
-                            ssl_protocol = System.Security.Authentication.SslProtocols.Ssl2;
-                            #pragma warning restore CS0618 // Type or member is obsolete
-                            break;
+                        ssl_protocol = System.Security.Authentication.SslProtocols.Tls13;
+                    }
+                    else
+                    {
+                        ssl_protocol = System.Security.Authentication.SslProtocols.Tls12;
                     }
                 }
 

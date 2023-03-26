@@ -54,14 +54,13 @@ namespace Omega_Drive_Client
 
         private async void Log_In_User(object sender, RoutedEventArgs e)
         {
-
-            byte[] image = System.IO.File.ReadAllBytes("Test_Image.jpg");
-
-            byte[] serialized_client_payload = await client_payload.Serialize_Payload("Log in", Log_In_Email_TextBox.Text, image);
+            byte[] serialized_client_payload = await client_payload.Serialize_Payload("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text));
             byte[] serialized_server_payload = await server_connections.Secure_Server_Connections(serialized_client_payload);
 
 
             Server_WSDL_Payload deserialized_server_payload = await client_payload.Deserialize_Payload(serialized_server_payload);
+
+            //System.Diagnostics.Debug.WriteLine("Server response: " + Encoding.UTF8.GetString(deserialized_server_payload.Server_Payload));
         }
 
         private void Keep_User_Logged_In(object sender, RoutedEventArgs e)

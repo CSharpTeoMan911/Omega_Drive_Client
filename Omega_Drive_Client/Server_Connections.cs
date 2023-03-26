@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,127 +37,141 @@ namespace Omega_Drive_Client
             System.Net.Sockets.Socket client = new System.Net.Sockets.Socket( System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
             client.SendBufferSize = 18000;
             client.ReceiveBufferSize = 18000;
+            client.SendTimeout = 2000;
+            client.ReceiveTimeout = 2000;
 
             try
             {
-                await Connection_Speed_Calculator(ip_address);
+               // await Connection_Speed_Calculator(ip_address);
+
 
                 if (current_connection_speed > 0)
                 {
-                    await client.ConnectAsync(ip_address, port_number);
+                    
+                }
 
-                    System.Net.Sockets.NetworkStream client_network_stream = new System.Net.Sockets.NetworkStream(client);
+
+                //  !!!!!!!!!!!!!!!!! REPLACE THE PING IMPLEMENTATION !!!!!!!!!!!!!!!!!!
+                //
+                //
+                //   DO A CONNECTION SPEED ANALYSIS USING THE ROUND TRIP TIME COLLECTED
+                //   FROM EXCHANGING MESSAGES ON THE CONNECTION STREAM, NOT USING PING.
+                //
+                //
+                //  !!!!!!!!!!!!!!!!! REPLACE THE PING IMPLEMENTATION !!!!!!!!!!!!!!!!!!
+
+
+
+                await client.ConnectAsync(ip_address, port_number);
+
+                System.Net.Sockets.NetworkStream client_network_stream = new System.Net.Sockets.NetworkStream(client);
+
+                try
+                {
+                    System.Net.Security.SslStream client_secure_socket_layer_stream = new System.Net.Security.SslStream(client_network_stream, false, new System.Net.Security.RemoteCertificateValidationCallback(ValidateServerCertificate), null, System.Net.Security.EncryptionPolicy.RequireEncryption);
+                    
 
                     try
                     {
-                        System.Net.Security.SslStream client_secure_socket_layer_stream = new System.Net.Security.SslStream(client_network_stream, false, new System.Net.Security.RemoteCertificateValidationCallback(ValidateServerCertificate), null, System.Net.Security.EncryptionPolicy.RequireEncryption);
+                        client_secure_socket_layer_stream.AuthenticateAsClient("Omega_Drive_Certificate", null, ssl_protocol, true);
 
-                        try
+                        byte[] client_payload_size_buffer = BitConverter.GetBytes(payload.Length);
+
+                        //await Calculate_Timeout(client, client_payload_size_buffer.Length);
+
+                        await client_secure_socket_layer_stream.WriteAsync(client_payload_size_buffer, 0, client_payload_size_buffer.Length);
+
+                        await client_secure_socket_layer_stream.FlushAsync();
+
+
+
+
+
+                        //await Calculate_Timeout(client, server_response.Length);
+
+                        await client_secure_socket_layer_stream.ReadAsync(server_response, 0, server_response.Length);
+
+                        await client_secure_socket_layer_stream.FlushAsync();
+
+
+                        System.Diagnostics.Debug.WriteLine(Encoding.UTF8.GetString(server_response));
+
+
+                        //await Calculate_Timeout(client, payload.Length);
+
+                        await client_secure_socket_layer_stream.WriteAsync(payload, 0, payload.Length);
+
+                        await client_secure_socket_layer_stream.FlushAsync();
+
+
+
+
+
+                        byte[] server_payload_size_buffer = new byte[1024];
+
+                        //await Calculate_Timeout(client, server_payload_size_buffer.Length);
+
+                        await client_secure_socket_layer_stream.ReadAsync(server_payload_size_buffer, 0, server_payload_size_buffer.Length);
+
+                        await client_secure_socket_layer_stream.FlushAsync();
+
+
+
+
+
+                        //await Calculate_Timeout(client, client_response.Length);
+
+                        await client_secure_socket_layer_stream.WriteAsync(client_response, 0, client_response.Length);
+
+                        await client_secure_socket_layer_stream.FlushAsync();
+
+
+
+
+
+                        server_payload = new byte[BitConverter.ToInt32(server_payload_size_buffer)];
+
+                        int total_bytes_read = 0;
+
+                        while (total_bytes_read < server_payload.Length)
                         {
-                            client_secure_socket_layer_stream.AuthenticateAsClient("Omega_Drive_Certificate", null, ssl_protocol, true);
-
-
-
-                            
-                            byte[] client_payload_size_buffer = BitConverter.GetBytes(payload.Length);
-
-                            await Calculate_Timeout(client, client_payload_size_buffer.Length);
-
-                            await client_secure_socket_layer_stream.WriteAsync(client_payload_size_buffer, 0, client_payload_size_buffer.Length);
-
-                            await client_secure_socket_layer_stream.FlushAsync();
-
-
-
-
-
-                            await Calculate_Timeout(client, server_response.Length);
-
-                            await client_secure_socket_layer_stream.ReadAsync(server_response, 0, server_response.Length);
-
-                            await client_secure_socket_layer_stream.FlushAsync();
-
-
-
-
-
-                            await Calculate_Timeout(client, payload.Length);
-
-                            await client_secure_socket_layer_stream.WriteAsync(payload, 0, payload.Length);
-
-                            await client_secure_socket_layer_stream.FlushAsync();
-
-
-
-
-
-                            byte[] server_payload_size_buffer = new byte[1024];
-
-                            await Calculate_Timeout(client, server_payload_size_buffer.Length);
-
-                            await client_secure_socket_layer_stream.ReadAsync(server_payload_size_buffer, 0, server_payload_size_buffer.Length);
-
-                            await client_secure_socket_layer_stream.FlushAsync();
-
-
-
-
-
-                            await Calculate_Timeout(client, client_response.Length);
-
-                            await client_secure_socket_layer_stream.WriteAsync(client_response, 0, client_response.Length);
-
-                            await client_secure_socket_layer_stream.FlushAsync();
-
-
-
-
-
-                            server_payload = new byte[BitConverter.ToInt32(server_payload_size_buffer)];
-
-                            int total_bytes_read = 0;
-
-                            while (total_bytes_read < server_payload.Length)
-                            {
-                                total_bytes_read += await client_secure_socket_layer_stream.ReadAsync(server_payload, total_bytes_read, server_payload.Length - total_bytes_read);
-                            }
-
+                            total_bytes_read += await client_secure_socket_layer_stream.ReadAsync(server_payload, total_bytes_read, server_payload.Length - total_bytes_read);
                         }
-                        catch (Exception E)
-                        {
-                            if (client_secure_socket_layer_stream != null)
-                            {
-                                client_secure_socket_layer_stream.Close();
-                            }
-                        }
-                        finally
-                        {
-                            if (client_secure_socket_layer_stream != null)
-                            {
-                                await client_secure_socket_layer_stream.DisposeAsync();
-                            }
-                        }
+
                     }
-                    catch (Exception E)
+                    catch (AuthenticationException ex)
                     {
-                        if (client_network_stream != null)
-                        {
-                            client_network_stream.Close();
-                        }
+                        System.Diagnostics.Debug.WriteLine(ex.InnerException.Message);
                     }
                     finally
                     {
-                        if (client_network_stream != null)
+                        if (client_secure_socket_layer_stream != null)
                         {
-                            client_network_stream.Close();
-                            await client_network_stream.DisposeAsync();
+                            await client_secure_socket_layer_stream.DisposeAsync();
                         }
                     }
                 }
+                catch (Exception E)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error: " + E.Message);
+                    if (client_network_stream != null)
+                    {
+                        client_network_stream.Close();
+                    }
+                }
+                finally
+                {
+                    if (client_network_stream != null)
+                    {
+                        client_network_stream.Close();
+                        await client_network_stream.DisposeAsync();
+                    }
+                }
             }
-            catch(Exception E)
+            catch (Exception E)
             {
-                if(client != null)
+                System.Diagnostics.Debug.WriteLine("Error: " + E.Message);
+                if (client != null)
                 {
                     client.Close();
                 }
