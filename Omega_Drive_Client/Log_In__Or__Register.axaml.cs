@@ -60,7 +60,11 @@ namespace Omega_Drive_Client
 
             Server_WSDL_Payload deserialized_server_payload = await client_payload.Deserialize_Payload(serialized_server_payload);
 
-            //System.Diagnostics.Debug.WriteLine("Server response: " + Encoding.UTF8.GetString(deserialized_server_payload.Server_Payload));
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Server response: " + Encoding.UTF8.GetString(deserialized_server_payload.Server_Payload));
+            }
+            catch { }
         }
 
         private void Keep_User_Logged_In(object sender, RoutedEventArgs e)
@@ -70,9 +74,19 @@ namespace Omega_Drive_Client
         }
 
 
-        private void Resgister_User(object sender, RoutedEventArgs e)
+        private async void Resgister_User(object sender, RoutedEventArgs e)
         {
-            
+            byte[] serialized_client_payload = await client_payload.Serialize_Payload("Register", Register_Email_TextBox.Text, Encoding.UTF8.GetBytes(Register_Repeat_Password_TextBox.Text));
+            byte[] serialized_server_payload = await server_connections.Secure_Server_Connections(serialized_client_payload);
+
+
+            Server_WSDL_Payload deserialized_server_payload = await client_payload.Deserialize_Payload(serialized_server_payload);
+
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Server response: " + Encoding.UTF8.GetString(deserialized_server_payload.Server_Payload));
+            }
+            catch { }
         }
 
         private void Open_Settings_Page(object sender, RoutedEventArgs e)

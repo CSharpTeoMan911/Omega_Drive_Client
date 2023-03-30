@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,6 @@ namespace Omega_Drive_Client
 {
     class Server_Connections:Client_Application_Variables
     {
-        private int current_connection_speed;
         private byte[] server_response = new byte[Encoding.UTF8.GetBytes("OK").Length];
         private byte[] client_response = Encoding.UTF8.GetBytes("OK");
 
@@ -35,30 +35,14 @@ namespace Omega_Drive_Client
 
 
             System.Net.Sockets.Socket client = new System.Net.Sockets.Socket( System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
-            client.SendBufferSize = 18000;
-            client.ReceiveBufferSize = 18000;
-            client.SendTimeout = 2000;
-            client.ReceiveTimeout = 2000;
 
             try
             {
-               // await Connection_Speed_Calculator(ip_address);
+                client.SendBufferSize = 18000;
+                client.ReceiveBufferSize = 18000;
+                client.SendTimeout = 1000;
+                client.ReceiveTimeout = 1000;
 
-
-                if (current_connection_speed > 0)
-                {
-                    
-                }
-
-
-                //  !!!!!!!!!!!!!!!!! REPLACE THE PING IMPLEMENTATION !!!!!!!!!!!!!!!!!!
-                //
-                //
-                //   DO A CONNECTION SPEED ANALYSIS USING THE ROUND TRIP TIME COLLECTED
-                //   FROM EXCHANGING MESSAGES ON THE CONNECTION STREAM, NOT USING PING.
-                //
-                //
-                //  !!!!!!!!!!!!!!!!! REPLACE THE PING IMPLEMENTATION !!!!!!!!!!!!!!!!!!
 
 
 
@@ -75,73 +59,82 @@ namespace Omega_Drive_Client
                     {
                         client_secure_socket_layer_stream.AuthenticateAsClient("Omega_Drive_Certificate", null, ssl_protocol, true);
 
-                        byte[] client_payload_size_buffer = BitConverter.GetBytes(payload.Length);
-
-                        //await Calculate_Timeout(client, client_payload_size_buffer.Length);
-
-                        await client_secure_socket_layer_stream.WriteAsync(client_payload_size_buffer, 0, client_payload_size_buffer.Length);
-
-                        await client_secure_socket_layer_stream.FlushAsync();
+                        int bytes_per_second = await Connection_Speed_Calculator(ip_address, client_secure_socket_layer_stream);
 
 
-
-
-
-                        //await Calculate_Timeout(client, server_response.Length);
-
-                        await client_secure_socket_layer_stream.ReadAsync(server_response, 0, server_response.Length);
-
-                        await client_secure_socket_layer_stream.FlushAsync();
-
-
-                        System.Diagnostics.Debug.WriteLine(Encoding.UTF8.GetString(server_response));
-
-
-                        //await Calculate_Timeout(client, payload.Length);
-
-                        await client_secure_socket_layer_stream.WriteAsync(payload, 0, payload.Length);
-
-                        await client_secure_socket_layer_stream.FlushAsync();
-
-
-
-
-
-                        byte[] server_payload_size_buffer = new byte[1024];
-
-                        //await Calculate_Timeout(client, server_payload_size_buffer.Length);
-
-                        await client_secure_socket_layer_stream.ReadAsync(server_payload_size_buffer, 0, server_payload_size_buffer.Length);
-
-                        await client_secure_socket_layer_stream.FlushAsync();
-
-
-
-
-
-                        //await Calculate_Timeout(client, client_response.Length);
-
-                        await client_secure_socket_layer_stream.WriteAsync(client_response, 0, client_response.Length);
-
-                        await client_secure_socket_layer_stream.FlushAsync();
-
-
-
-
-
-                        server_payload = new byte[BitConverter.ToInt32(server_payload_size_buffer)];
-
-                        int total_bytes_read = 0;
-
-                        while (total_bytes_read < server_payload.Length)
+                        if(bytes_per_second > 0)
                         {
-                            total_bytes_read += await client_secure_socket_layer_stream.ReadAsync(server_payload, total_bytes_read, server_payload.Length - total_bytes_read);
+                            byte[] client_payload_size_buffer = BitConverter.GetBytes(payload.Length);
+
+                            await Calculate_Timeout(client, client_payload_size_buffer.Length, bytes_per_second);
+
+                            await client_secure_socket_layer_stream.WriteAsync(client_payload_size_buffer, 0, client_payload_size_buffer.Length);
+
+                            await client_secure_socket_layer_stream.FlushAsync();
+
+
+
+
+
+                            await Calculate_Timeout(client, server_response.Length, bytes_per_second);
+
+                            await client_secure_socket_layer_stream.ReadAsync(server_response, 0, server_response.Length);
+
+                            await client_secure_socket_layer_stream.FlushAsync();
+
+
+                            
+
+
+
+                            await Calculate_Timeout(client, payload.Length, bytes_per_second);
+
+                            await client_secure_socket_layer_stream.WriteAsync(payload, 0, payload.Length);
+
+                            await client_secure_socket_layer_stream.FlushAsync();
+
+
+
+
+
+
+                            byte[] server_payload_size_buffer = new byte[1024];
+
+                            await Calculate_Timeout(client, server_payload_size_buffer.Length, bytes_per_second);
+
+                            await client_secure_socket_layer_stream.ReadAsync(server_payload_size_buffer, 0, server_payload_size_buffer.Length);
+
+                            await client_secure_socket_layer_stream.FlushAsync();
+
+
+
+
+
+
+                            await Calculate_Timeout(client, client_response.Length, bytes_per_second);
+
+                            await client_secure_socket_layer_stream.WriteAsync(client_response, 0, client_response.Length);
+
+                            await client_secure_socket_layer_stream.FlushAsync();
+
+
+
+
+
+                            server_payload = new byte[BitConverter.ToInt32(server_payload_size_buffer)];
+
+                            int total_bytes_read = 0;
+
+                            while (total_bytes_read < server_payload.Length)
+                            {
+                                total_bytes_read += await client_secure_socket_layer_stream.ReadAsync(server_payload, total_bytes_read, server_payload.Length - total_bytes_read);
+                            }
                         }
 
                     }
-                    catch (AuthenticationException ex)
+                    catch (Exception e)
                     {
-                        System.Diagnostics.Debug.WriteLine(ex.InnerException.Message);
+
                     }
                     finally
                     {
@@ -191,71 +184,83 @@ namespace Omega_Drive_Client
 
 
 
-        private Task<bool> Connection_Speed_Calculator(System.Net.IPAddress IP_Address)
+        private async Task<int> Connection_Speed_Calculator(System.Net.IPAddress IP_Address, System.Net.Security.SslStream client_secure_socket_layer_stream)
         {
             int round_trip_time_counter = 0;
             int calculated_average_round_trip_time = 0;
             int bytes_per_second = 0;
 
+            byte[] packet = new byte[1500];
+
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+
 
             if (IP_Address != null)
             {
-                System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
 
+            Ping_Test:
 
-                System.Net.NetworkInformation.PingOptions ping_options = new System.Net.NetworkInformation.PingOptions();
-                ping_options.DontFragment = true;
-
-
-
-                while (round_trip_time_counter < 10)
+                try
                 {
-                    System.Net.NetworkInformation.PingReply ping_reply = ping.Send(IP_Address, 100, new byte[1500], ping_options);
+                    stopwatch.Start();
 
-                    if (ping_reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+                    await client_secure_socket_layer_stream.WriteAsync(packet, 0, packet.Length);
+
+                    await client_secure_socket_layer_stream.ReadAsync(packet, 0, packet.Length);
+
+                    stopwatch.Stop();
+
+
+
+                    if (round_trip_time_counter < 10)
                     {
-                        calculated_average_round_trip_time += (int)ping_reply.RoundtripTime;
+                        calculated_average_round_trip_time += (int)stopwatch.ElapsedMilliseconds;
+                        stopwatch.Reset();
+                        round_trip_time_counter++;
+
+                        goto Ping_Test;
+                    }
+
+
+
+                    if (calculated_average_round_trip_time > 0)
+                    {
+                        calculated_average_round_trip_time = calculated_average_round_trip_time / 10;
+
+                        if (calculated_average_round_trip_time == 0)
+                        {
+                            calculated_average_round_trip_time = 1;
+                        }
                     }
                     else
                     {
-                        bytes_per_second = -1;
-                        goto Ping_Failed;
+                        calculated_average_round_trip_time = 1;
                     }
 
-                    round_trip_time_counter++;
+
+                    bytes_per_second = 24 / calculated_average_round_trip_time * 125000;
+
+                    if (bytes_per_second < 1)
+                    {
+                        bytes_per_second = 1;
+                    }
                 }
-
-
-
-                if (calculated_average_round_trip_time > 0)
+                catch
                 {
-                    calculated_average_round_trip_time = calculated_average_round_trip_time / 10;
-                }
-                else
-                {
-                    calculated_average_round_trip_time = 1;
-                }
-
-
-                bytes_per_second = 24 / calculated_average_round_trip_time * 125000;
-
-                if (bytes_per_second < 1)
-                {
-                    bytes_per_second = 1;
+                    bytes_per_second = -1;
                 }
             }
 
-            current_connection_speed = bytes_per_second;
+         
 
-        Ping_Failed:
-            return Task.FromResult(true);
+            return bytes_per_second;
         }
 
 
-        private Task<bool> Calculate_Timeout(System.Net.Sockets.Socket client, int payload_size)
+        private Task<bool> Calculate_Timeout(System.Net.Sockets.Socket client, int payload_size, int bytes_per_second)
         {
-            client.SendBufferSize = payload_size / current_connection_speed + 1000;
-            client.ReceiveBufferSize = payload_size / current_connection_speed + 1000;
+            client.SendBufferSize = payload_size / bytes_per_second + 1000;
+            client.ReceiveBufferSize = payload_size / bytes_per_second + 1000;
 
             return Task.FromResult(true);
         }
