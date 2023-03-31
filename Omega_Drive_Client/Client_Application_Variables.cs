@@ -9,6 +9,9 @@ namespace Omega_Drive_Client
     class Client_Application_Variables
     {
         private static string file_name = "app_settings.json";
+        protected static byte[] error_message = Encoding.UTF8.GetBytes("Connection failed");
+
+        protected static Payload_Serialization payload_serialization = new Payload_Serialization();
 
         private static Application_Settings application_Settings = new Application_Settings();
 

@@ -70,6 +70,8 @@ namespace Omega_Drive_Client
             }
             catch (Exception E)
             {
+                
+
                 if (payload_stream != null)
                 {
                     payload_stream.Close();

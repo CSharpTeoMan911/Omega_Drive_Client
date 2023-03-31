@@ -29,9 +29,13 @@ namespace Omega_Drive_Client
 
 
 
-        internal async Task<byte[]> Secure_Server_Connections(byte[] payload)
+        internal async Task<byte[]> Secure_Server_Connections(string function, string email___or___log_in_session_key___or___account_validation_key, byte[] password___or___binary_file)
         {
-            byte[] server_payload = new byte[1024];
+            byte[] payload = await payload_serialization.Serialize_Payload(function, email___or___log_in_session_key___or___account_validation_key, password___or___binary_file);
+
+            byte[] server_payload = error_message;
+
+
 
 
             System.Net.Sockets.Socket client = new System.Net.Sockets.Socket( System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
@@ -129,12 +133,16 @@ namespace Omega_Drive_Client
                             {
                                 total_bytes_read += await client_secure_socket_layer_stream.ReadAsync(server_payload, total_bytes_read, server_payload.Length - total_bytes_read);
                             }
+
+
+                            server_payload = (await payload_serialization.Deserialize_Payload(server_payload)).Server_Payload;
+                            
                         }
 
                     }
                     catch (Exception e)
                     {
-
+                        server_payload = error_message;
                     }
                     finally
                     {
@@ -146,7 +154,8 @@ namespace Omega_Drive_Client
                 }
                 catch (Exception E)
                 {
-                    System.Diagnostics.Debug.WriteLine("Error: " + E.Message);
+                    server_payload = error_message;
+
                     if (client_network_stream != null)
                     {
                         client_network_stream.Close();
@@ -163,7 +172,8 @@ namespace Omega_Drive_Client
             }
             catch (Exception E)
             {
-                System.Diagnostics.Debug.WriteLine("Error: " + E.Message);
+                server_payload = error_message;
+
                 if (client != null)
                 {
                     client.Close();

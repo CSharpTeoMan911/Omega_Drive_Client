@@ -11,7 +11,6 @@ namespace Omega_Drive_Client
     public partial class Log_In__Or__Register : Window
     {
         private static Server_Connections server_connections = new Server_Connections();
-        private static Payload_Serialization client_payload = new Payload_Serialization();
 
         private sealed class Client_Application_Variables_Mitigator : Client_Application_Variables
         {
@@ -52,20 +51,16 @@ namespace Omega_Drive_Client
             Registration_Panel.IsVisible = true;
         }
 
+
         private async void Log_In_User(object sender, RoutedEventArgs e)
         {
-            byte[] serialized_client_payload = await client_payload.Serialize_Payload("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text));
-            byte[] serialized_server_payload = await server_connections.Secure_Server_Connections(serialized_client_payload);
+            byte[] server_payload = await server_connections.Secure_Server_Connections("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text));
 
-
-            Server_WSDL_Payload deserialized_server_payload = await client_payload.Deserialize_Payload(serialized_server_payload);
-
-            try
-            {
-                System.Diagnostics.Debug.WriteLine("Server response: " + Encoding.UTF8.GetString(deserialized_server_payload.Server_Payload));
-            }
-            catch { }
+            Notification_Window notification_Window = new Notification_Window(Encoding.UTF8.GetString(server_payload));
+            await notification_Window.ShowDialog(this);
         }
+
+
 
         private void Keep_User_Logged_In(object sender, RoutedEventArgs e)
         {
@@ -74,19 +69,33 @@ namespace Omega_Drive_Client
         }
 
 
+
         private async void Resgister_User(object sender, RoutedEventArgs e)
         {
-            byte[] serialized_client_payload = await client_payload.Serialize_Payload("Register", Register_Email_TextBox.Text, Encoding.UTF8.GetBytes(Register_Repeat_Password_TextBox.Text));
-            byte[] serialized_server_payload = await server_connections.Secure_Server_Connections(serialized_client_payload);
-
-
-            Server_WSDL_Payload deserialized_server_payload = await client_payload.Deserialize_Payload(serialized_server_payload);
-
-            try
+            if(Register_Password_TextBox.Text == Register_Repeat_Password_TextBox.Text)
             {
-                System.Diagnostics.Debug.WriteLine("Server response: " + Encoding.UTF8.GetString(deserialized_server_payload.Server_Payload));
+                byte[] server_payload = await server_connections.Secure_Server_Connections("Register", Register_Email_TextBox.Text, Encoding.UTF8.GetBytes(Register_Repeat_Password_TextBox.Text));
+                string account_registration_result = Encoding.UTF8.GetString(server_payload);
+
+
+
+                Notification_Window notification_Window = new Notification_Window(account_registration_result);
+                await notification_Window.ShowDialog(this);
+
+                if (account_registration_result == "Registration successful")
+                {
+                    Register_Email_TextBox.Text = String.Empty;
+                    Register_Password_TextBox.Text = String.Empty;
+                    Register_Repeat_Password_TextBox.Text = String.Empty;
+
+                    Open_Log_In_Panel(this, e);
+                }
             }
-            catch { }
+            else
+            {
+                Notification_Window notification_Window = new Notification_Window("Passwords do not match");
+                await notification_Window.ShowDialog(this);
+            }
         }
 
         private void Open_Settings_Page(object sender, RoutedEventArgs e)

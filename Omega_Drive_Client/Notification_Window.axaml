@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
+        x:Class="Omega_Drive_Client.Notification_Window"
+        Title="Notification_Window" Opened="Window_Opened" CanResize="False" MaxWidth="300" MaxHeight="200" Background="Transparent" TransparencyLevelHint="Transparent" Opacity="0.6">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<Rectangle Opacity="0.9" Grid.RowSpan="9" Grid.ColumnSpan="9">
+			<Rectangle.Fill>
+				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+					<GradientStop Color="#4AA1EB" Offset="0"/>
+					<GradientStop Color="#1B85EB" Offset="1"/>
+				</LinearGradientBrush>
+			</Rectangle.Fill>
+		</Rectangle>
+
+		<TextBlock Name="Error_Message_TextBlock" Grid.RowSpan="3" Grid.ColumnSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontFamily="Corbel Light" MaxHeight="66" MaxWidth="290" TextWrapping="Wrap" FontSize="16" Text="Error message">
+			<TextBlock.Foreground>
+				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+					<GradientStop Color="Black" Offset="0"/>
+					<GradientStop Color="#454747" Offset="1"/>
+				</LinearGradientBrush>
+			</TextBlock.Foreground>
+		</TextBlock>
+
+
+		<TextBlock Name="Error_Message_Content_TextBlock" Grid.Row="3" Grid.RowSpan="6" Grid.ColumnSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Medium" FontFamily="Corbel Light" MaxWidth="290" MaxHeight="132" TextWrapping="Wrap" Text="Error message content delivered Error message content delivered Error message content delivered Error message content delivered Error message content delivered Error message content delivered">
+			<TextBlock.Foreground>
+				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+					<GradientStop Color="Black" Offset="0"/>
+					<GradientStop Color="#363838" Offset="1"/>
+				</LinearGradientBrush>
+			</TextBlock.Foreground>
+		</TextBlock>
+		
+	</Grid>
+	
+	
+	
+</Window>
