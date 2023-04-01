@@ -56,6 +56,8 @@ namespace Omega_Drive_Client
         {
             byte[] server_payload = await server_connections.Secure_Server_Connections("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text));
 
+            System.Diagnostics.Debug.WriteLine("Result: " + Encoding.UTF8.GetString(server_payload));
+
             Notification_Window notification_Window = new Notification_Window(Encoding.UTF8.GetString(server_payload));
             await notification_Window.ShowDialog(this);
         }
