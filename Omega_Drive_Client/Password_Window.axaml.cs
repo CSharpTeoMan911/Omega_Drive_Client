@@ -8,6 +8,7 @@ namespace Omega_Drive_Client
     public partial class Password_Window : Window
     {
         private static Application_Cryptographic_Services application_cryptographic_services = new Application_Cryptographic_Services();
+        private static Server_Connections Server_Connections = new Server_Connections();
 
         private string Option;
         private string Path;
@@ -42,8 +43,8 @@ namespace Omega_Drive_Client
                     Window_TextBlock.Text = "Log in code";
                     break;
 
-                case "Account activation":
-                    Window_TextBlock.Text = "Account activation code";
+                case "Un-validated account":
+                    Window_TextBlock.Text = "Account validation code";
                     break;
             }
         }
@@ -62,9 +63,19 @@ namespace Omega_Drive_Client
                     break;
 
                 case "Log in":
+                    
                     break;
 
-                case "Account activation":
+                case "Un-validated account":
+                    string result = System.Text.Encoding.UTF8.GetString(await Server_Connections.Secure_Server_Connections("Account validation", Password_TextBox.Text, null));
+
+                    Notification_Window notification_Window = new Notification_Window(result);
+                    await notification_Window.ShowDialog(this);
+
+                    if (result == "Account validation successful")
+                    {
+                        this.Close();
+                    }
                     break;
             }
         }

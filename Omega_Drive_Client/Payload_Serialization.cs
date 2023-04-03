@@ -11,9 +11,28 @@ namespace Omega_Drive_Client
     {
 
 
-        public async Task<byte[]> Serialize_Payload(string function, string email___or___log_in_session_key___or___account_validation_key, byte[] password___or___binary_file)
+        public async Task<byte[]> Serialize_Payload(string? function, string? email___or___log_in_session_key___or___account_validation_key, byte[]? password___or___binary_file)
         {
             byte[] serialized_payload = new byte[1024];
+
+
+            if(function == null)
+            {
+                function = String.Empty;
+            }
+
+            if(email___or___log_in_session_key___or___account_validation_key == null)
+            {
+                email___or___log_in_session_key___or___account_validation_key = String.Empty;
+            }
+
+            if(password___or___binary_file == null)
+            {
+                password___or___binary_file = new byte[1];
+            }
+
+
+
 
 
             System.IO.StringWriter payload_stream = new StringWriter_Encoding();
@@ -56,10 +75,14 @@ namespace Omega_Drive_Client
 
 
 
-        public Task<Server_WSDL_Payload> Deserialize_Payload(byte[] payload)
+        public Task<Server_WSDL_Payload> Deserialize_Payload(byte[]? payload)
         {
             Server_WSDL_Payload server_WSDL_Payload = new Server_WSDL_Payload();
 
+            if(payload == null)
+            {
+                payload = new byte[1];
+            }
 
             System.IO.TextReader payload_stream = new System.IO.StringReader(Encoding.UTF8.GetString(payload));
 

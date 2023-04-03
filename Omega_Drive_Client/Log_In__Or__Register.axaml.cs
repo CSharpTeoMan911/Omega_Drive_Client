@@ -54,12 +54,19 @@ namespace Omega_Drive_Client
 
         private async void Log_In_User(object sender, RoutedEventArgs e)
         {
-            byte[] server_payload = await server_connections.Secure_Server_Connections("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text));
+            string server_payload = Encoding.UTF8.GetString(await server_connections.Secure_Server_Connections("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text)));
 
-            System.Diagnostics.Debug.WriteLine("Result: " + Encoding.UTF8.GetString(server_payload));
+            if(server_payload != "Log in successful")
+            {
+                Notification_Window notification_Window = new Notification_Window(server_payload);
+                await notification_Window.ShowDialog(this);
 
-            Notification_Window notification_Window = new Notification_Window(Encoding.UTF8.GetString(server_payload));
-            await notification_Window.ShowDialog(this);
+                if (server_payload == "Un-validated account")
+                {
+                    Password_Window password_Window = new Password_Window(server_payload, null);
+                    await password_Window.ShowDialog(this);
+                }
+            }
         }
 
 
