@@ -52,21 +52,40 @@ namespace Omega_Drive_Client
         }
 
 
-        private async void Log_In_User(object sender, RoutedEventArgs e)
+        private void Log_In_User(object sender, RoutedEventArgs e)
         {
-            string server_payload = Encoding.UTF8.GetString(await server_connections.Secure_Server_Connections("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text)));
 
-            if(server_payload != "Log in successful")
+
+            System.Threading.Thread paralel_processing = new System.Threading.Thread(async () =>
             {
-                Notification_Window notification_Window = new Notification_Window(server_payload);
-                await notification_Window.ShowDialog(this);
+                string server_payload = Encoding.UTF8.GetString(await server_connections.Secure_Server_Connections("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text)));
 
-                if (server_payload == "Un-validated account")
+                System.Diagnostics.Debug.WriteLine("Result: " + server_payload);
+
+                if (server_payload != "Log in successful")
                 {
-                    Password_Window password_Window = new Password_Window(server_payload, null);
-                    await password_Window.ShowDialog(this);
+                    Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
+                    {
+                        Notification_Window notification_Window = new Notification_Window(server_payload);
+                        await notification_Window.ShowDialog(this);
+
+                        if (server_payload == "Un-validated account")
+                        {
+                            Password_Window password_Window = new Password_Window(server_payload, null);
+                            await password_Window.ShowDialog(this);
+                        }
+
+                    }, Avalonia.Threading.DispatcherPriority.Background);
                 }
+            });
+
+            if(System.OperatingSystem.IsWindows() == true)
+            {
+                paralel_processing.SetApartmentState(System.Threading.ApartmentState.STA);
             }
+            paralel_processing.Priority = System.Threading.ThreadPriority.AboveNormal;
+            paralel_processing.IsBackground = true;
+            paralel_processing.Start();
         }
 
 
