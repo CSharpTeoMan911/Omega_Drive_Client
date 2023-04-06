@@ -5,6 +5,31 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Omega_Drive_Client.MainWindow"
         Title="Omega_Drive_Client" Initialized="Window_Initialized" Opened="Window_Opened">
+
+
+	<Window.Styles>
+		<Style Selector="Button.Transparent">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="#65B7EB"/>
+		</Style>
+
+		<Style Selector="Button.Transparent:pointerover /template/ ContentPresenter">
+			<Setter Property="Button.Background" Value="Transparent"/>
+			<Setter Property="Button.BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+						<GradientStop Color="#448DC2" Offset="0"/>
+						<GradientStop Color="#43D3F7" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+
+			<Setter Property="Button.BorderThickness" Value="2"/>
+		</Style>
+
+	</Window.Styles>
+	
+	
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
@@ -31,6 +56,14 @@
 		</Grid.ColumnDefinitions>
 		
 		<TextBlock Name="TEST" Grid.ColumnSpan="9" Grid.RowSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+		<Button Name="Main_Menu_Button" Classes="Transparent" Width="70" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,5,0,0" Grid.RowSpan="2" Grid.ColumnSpan="2">
+			<Button.Content>
+				<Image Source="/Assets/Omega_Drive.png" Width="{Binding $parent.Width}" Height="50" VerticalAlignment="Center"/>
+			</Button.Content>
+		</Button>
+		
+	
 		
 	</Grid>
 </Window>

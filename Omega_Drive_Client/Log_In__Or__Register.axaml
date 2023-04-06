@@ -191,7 +191,7 @@
 
 			<StackPanel  Margin="0,20,0,0" HorizontalAlignment="Center" Orientation="Horizontal">
 				<TextBlock Text="Keep me logged in" Margin="0,0,15,0" FontSize="11" Classes="Keep_Me_Logged_In" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-				<CheckBox HorizontalAlignment="Center"  VerticalAlignment="Center" Checked="Keep_User_Logged_In"/>
+				<CheckBox HorizontalAlignment="Center"  VerticalAlignment="Center" Checked="Keep_User_Logged_In" Unchecked="Do_Not_Keep_User_Logged_In"/>
 			</StackPanel>
 
 

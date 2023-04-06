@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Drawing;
 using System.Security.AccessControl;
+using System.Linq;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Omega_Drive_Client
 {
@@ -12,13 +14,9 @@ namespace Omega_Drive_Client
     {
         private static Server_Connections server_connections = new Server_Connections();
 
-        private sealed class Client_Application_Variables_Mitigator : Client_Application_Variables
-        {
-            internal static async Task<bool> Load_Application_File_Settings_Initiator()
-            {
-                return await Read_Application_Settings_File();
-            }
-        }
+
+
+
 
         public Log_In__Or__Register()
         {
@@ -27,6 +25,7 @@ namespace Omega_Drive_Client
 
         private async void Window_Opened(object sender, EventArgs e)
         {
+         
             Log_In_Email_TextBox.Text = String.Empty;
             Log_In_Password_TextBox.Text = String.Empty;
 
@@ -34,7 +33,9 @@ namespace Omega_Drive_Client
             Register_Password_TextBox.Text = String.Empty;
             Register_Repeat_Password_TextBox.Text = String.Empty;
 
-            await Client_Application_Variables_Mitigator.Load_Application_File_Settings_Initiator();
+            await Client_Application_Variables.Settings_File_Operation_Selector(Client_Application_Variables.Settings_File_Option.Read_Settings_File);
+
+
         }
 
 
@@ -54,29 +55,11 @@ namespace Omega_Drive_Client
 
         private void Log_In_User(object sender, RoutedEventArgs e)
         {
-
-
             System.Threading.Thread paralel_processing = new System.Threading.Thread(async () =>
             {
                 string server_payload = Encoding.UTF8.GetString(await server_connections.Secure_Server_Connections("Log in", Log_In_Email_TextBox.Text, Encoding.UTF8.GetBytes(Log_In_Password_TextBox.Text)));
 
-                System.Diagnostics.Debug.WriteLine("Result: " + server_payload);
-
-                if (server_payload != "Log in successful")
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
-                    {
-                        Notification_Window notification_Window = new Notification_Window(server_payload);
-                        await notification_Window.ShowDialog(this);
-
-                        if (server_payload == "Un-validated account")
-                        {
-                            Password_Window password_Window = new Password_Window(server_payload, null);
-                            await password_Window.ShowDialog(this);
-                        }
-
-                    }, Avalonia.Threading.DispatcherPriority.Background);
-                }
+                Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Log_In, server_payload, this);
             });
 
             if(System.OperatingSystem.IsWindows() == true)
@@ -92,39 +75,54 @@ namespace Omega_Drive_Client
 
         private void Keep_User_Logged_In(object sender, RoutedEventArgs e)
         {
-            Registration_Panel.IsVisible = false;
-            Log_In_Panel.IsVisible = true;
+            Client_Application_Variables.Set_Keep_User_Logged_In(true);
         }
 
-
-
-        private async void Resgister_User(object sender, RoutedEventArgs e)
+        private void Do_Not_Keep_User_Logged_In(object sender, RoutedEventArgs e)
         {
-            if(Register_Password_TextBox.Text == Register_Repeat_Password_TextBox.Text)
+            Client_Application_Variables.Set_Keep_User_Logged_In(false);
+        }
+
+
+        private void Resgister_User(object sender, RoutedEventArgs e)
+        {
+            System.Threading.Thread paralel_processing = new System.Threading.Thread(async () =>
             {
-                byte[] server_payload = await server_connections.Secure_Server_Connections("Register", Register_Email_TextBox.Text, Encoding.UTF8.GetBytes(Register_Repeat_Password_TextBox.Text));
-                string account_registration_result = Encoding.UTF8.GetString(server_payload);
+                string server_payload = INotification_Messages.passwords_do_not_match;
 
-
-
-                Notification_Window notification_Window = new Notification_Window(account_registration_result);
-                await notification_Window.ShowDialog(this);
-
-                if (account_registration_result == "Registration successful")
+                if (Register_Password_TextBox.Text == Register_Repeat_Password_TextBox.Text)
                 {
-                    Register_Email_TextBox.Text = String.Empty;
-                    Register_Password_TextBox.Text = String.Empty;
-                    Register_Repeat_Password_TextBox.Text = String.Empty;
-
-                    Open_Log_In_Panel(this, e);
+                    server_payload = Encoding.UTF8.GetString(await server_connections.Secure_Server_Connections("Register", Register_Email_TextBox.Text, Encoding.UTF8.GetBytes(Register_Repeat_Password_TextBox.Text)));
                 }
-            }
-            else
+
+
+                Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Register, server_payload, this);
+            });
+
+            if (System.OperatingSystem.IsWindows() == true)
             {
-                Notification_Window notification_Window = new Notification_Window("Passwords do not match");
-                await notification_Window.ShowDialog(this);
+                paralel_processing.SetApartmentState(System.Threading.ApartmentState.STA);
+            }
+            paralel_processing.Priority = System.Threading.ThreadPriority.AboveNormal;
+            paralel_processing.IsBackground = true;
+            paralel_processing.Start();
+        }
+
+
+        
+        internal void Close_Window()
+        {
+            if(this != null)
+            {
+                this.Close();
             }
         }
+
+        internal void Open_Log_In_Panel_Mitigator()
+        {
+            Open_Log_In_Panel(this, new RoutedEventArgs());
+        }
+
 
         private void Open_Settings_Page(object sender, RoutedEventArgs e)
         {

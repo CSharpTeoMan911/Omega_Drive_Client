@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace Omega_Drive_Client
 {
+
     class Server_Connections:Client_Application_Variables
     {
+        protected byte[] error_message = Encoding.UTF8.GetBytes(INotification_Messages.connection_failed_message);
         private byte[] server_response = new byte[Encoding.UTF8.GetBytes("OK").Length];
         private byte[] client_response = Encoding.UTF8.GetBytes("OK");
 

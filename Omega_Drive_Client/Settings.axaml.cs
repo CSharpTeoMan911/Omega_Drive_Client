@@ -27,96 +27,15 @@ namespace Omega_Drive_Client
             InitializeComponent();
         }
 
-        private sealed class Client_Application_Variables_Mitigator : Client_Application_Variables
+        private void Window_Opened(object obj, EventArgs e)
         {
-            internal static Task<int> Get_Port_Number()
-            {
-                return Task.FromResult(port_number);
-            }
-
-            internal static async Task<bool> Set_Port_Number(int port_num)
-            {
-                port_number = port_num;
-
-                await Update_Application_Settings_File();
-
-                return true;
-            }
-
-            internal static Task<System.Net.IPAddress> Get_IP_Address()
-            {
-                return Task.FromResult(ip_address);
-            }
-
-            internal static async Task<bool> Set_IP_Address(System.Net.IPAddress ip_addr)
-            {
-                ip_address = ip_addr;
-
-                await Update_Application_Settings_File();
-
-                return true;
-            }
-
-            internal static Task<bool> Increment_Current_Protocol_Index()
-            {
-                lock (list_of_available_protocols)
-                {
-                    if (current_protocol + 1 < list_of_available_protocols.Count)
-                    {
-                        current_protocol += 1;
-                    }
-                }
-
-                return Task.FromResult(true);
-            }
-
-
-            internal static Task<bool> Decrement_Current_Protocol_Index()
-            {
-                lock (list_of_available_protocols)
-                {
-                    if (current_protocol > 0)
-                    {
-                        current_protocol -= 1;
-                    }
-                }
-
-                return Task.FromResult(true);
-            }
-
-            internal static async Task<string> Get_Current_Protocol()
-            {
-                string current_selected_protocol = String.Empty;
-
-                lock (list_of_available_protocols)
-                {
-                    current_selected_protocol = list_of_available_protocols[current_protocol];
-
-                    if (current_selected_protocol == "Tls 1.3")
-                    {
-                        ssl_protocol = System.Security.Authentication.SslProtocols.Tls13;
-                    }
-                    else
-                    {
-                        ssl_protocol = System.Security.Authentication.SslProtocols.Tls12;
-                    }
-                }
-
-                await Update_Application_Settings_File();
-
-                return current_selected_protocol;
-            }
-        }
-
-        private async void Window_Opened(object obj, EventArgs e)
-        {
-            address = await Client_Application_Variables_Mitigator.Get_IP_Address();
+            address = Client_Application_Variables.Get_IP_Address();
             IP_TextBox.Text = address.ToString();
-            Port_TextBox.Text = (await Client_Application_Variables_Mitigator.Get_Port_Number()).ToString();
+            Port_TextBox.Text = (Client_Application_Variables.Get_Port_Number()).ToString();
             Choose_Protocol("Current");
         }
 
-        private async void IP_TextBox_Lost_Focus(object obj, RoutedEventArgs e)
+        private void IP_TextBox_Lost_Focus(object obj, RoutedEventArgs e)
         {
             string buffer = address.ToString();
             System.Net.IPAddress.TryParse(IP_TextBox.Text, out address);
@@ -124,7 +43,7 @@ namespace Omega_Drive_Client
             if(address != null)
             {
                 IP_TextBox.Text = address.ToString();
-                await Client_Application_Variables_Mitigator.Set_IP_Address(address);
+                Client_Application_Variables.Set_IP_Address(address);
             }
             else
             {
@@ -133,7 +52,7 @@ namespace Omega_Drive_Client
             }
         }
 
-        private async void Port_TextBox_Lost_Focus(object? sender, RoutedEventArgs e)
+        private void Port_TextBox_Lost_Focus(object? sender, RoutedEventArgs e)
         {
             try
             {
@@ -141,16 +60,16 @@ namespace Omega_Drive_Client
 
                 if(port_number < 65535)
                 {
-                    await Client_Application_Variables_Mitigator.Set_Port_Number((int)port_number);
+                    Client_Application_Variables.Set_Port_Number((int)port_number);
                 }
                 else
                 {
-                    Port_TextBox.Text = (await Client_Application_Variables_Mitigator.Get_Port_Number()).ToString();
+                    Port_TextBox.Text = (Client_Application_Variables.Get_Port_Number()).ToString();
                 }
             }
             catch
             {
-                Port_TextBox.Text = (await Client_Application_Variables_Mitigator.Get_Port_Number()).ToString();
+                Port_TextBox.Text = (Client_Application_Variables.Get_Port_Number()).ToString();
             }
         }
 
@@ -191,14 +110,17 @@ namespace Omega_Drive_Client
 
                     if(certificate_path != null)
                     {
-                        Password_Window password = new Password_Window("Ssl Certificate", certificate_path[0]);
-                        await password.ShowDialog(this);
+                        if(this != null)
+                        {
+                            Password_Window password = new Password_Window(Password_Window.Password_Function_Selection.SslCertificate, certificate_path[0]);
+                            await password.ShowDialog(this);
+                        }
                     }
                 }
             }
-            catch
+            catch(Exception E)
             {
-
+                System.Diagnostics.Debug.WriteLine(E.Message);
             }
            
         }
@@ -211,17 +133,19 @@ namespace Omega_Drive_Client
                 switch(option)
                 {
                     case "Next":
-                        await Client_Application_Variables_Mitigator.Increment_Current_Protocol_Index();
-                        Current_Protocol_TextBlock.Text = await Client_Application_Variables_Mitigator.Get_Current_Protocol();
+                        Client_Application_Variables.Increment_Current_Protocol_Index();
+                        Current_Protocol_TextBlock.Text = Client_Application_Variables.Get_And_Set_Current_Protocol();
+                        await Client_Application_Variables.Settings_File_Operation_Selector(Client_Application_Variables.Settings_File_Option.Update_Settings_File);
                         break;
 
                     case "Current":
-                        Current_Protocol_TextBlock.Text = await Client_Application_Variables_Mitigator.Get_Current_Protocol();
+                        Current_Protocol_TextBlock.Text = Client_Application_Variables.Get_And_Set_Current_Protocol();
                         break;
 
                     case "Previous":
-                        await Client_Application_Variables_Mitigator.Decrement_Current_Protocol_Index();
-                        Current_Protocol_TextBlock.Text = await Client_Application_Variables_Mitigator.Get_Current_Protocol();
+                        Client_Application_Variables.Decrement_Current_Protocol_Index();
+                        Current_Protocol_TextBlock.Text = Client_Application_Variables.Get_And_Set_Current_Protocol();
+                        await Client_Application_Variables.Settings_File_Operation_Selector(Client_Application_Variables.Settings_File_Option.Update_Settings_File);
                         break;
                 }
             });
