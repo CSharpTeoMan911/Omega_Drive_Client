@@ -32,6 +32,16 @@ namespace Omega_Drive_Client
             address = Client_Application_Variables.Get_IP_Address();
             IP_TextBox.Text = address.ToString();
             Port_TextBox.Text = (Client_Application_Variables.Get_Port_Number()).ToString();
+
+            if(Client_Application_Variables.Get_If_Self_Signed_Certificates_Are_Allowed() == true)
+            {
+                Allow_Self_Signed_Certificates_Checkbox.IsChecked = true;
+            }
+            else
+            {
+                Allow_Self_Signed_Certificates_Checkbox.IsChecked = false;
+            }
+
             Choose_Protocol("Current");
         }
 
@@ -76,13 +86,25 @@ namespace Omega_Drive_Client
 
         private void Previous_Protocol(object obj, RoutedEventArgs e)
         {
-
             Choose_Protocol("Previous");
         }
 
         private void Next_Protocol(object obj, RoutedEventArgs e)
         {
             Choose_Protocol("Next");
+        }
+
+
+        private async void Allow_Self_Signed_Certificates(object obj, RoutedEventArgs e)
+        {
+            Client_Application_Variables.Set_If_Self_Signed_Certificates_Are_Allowed(true);
+            await Client_Application_Variables.Settings_File_Operation_Selector(Client_Application_Variables.Settings_File_Option.Update_Settings_File);
+        }
+
+        private async void Do_Not_Allow_Self_Signed_Certificates(object obj, RoutedEventArgs e)
+        {
+            Client_Application_Variables.Set_If_Self_Signed_Certificates_Are_Allowed(false);
+            await Client_Application_Variables.Settings_File_Operation_Selector(Client_Application_Variables.Settings_File_Option.Update_Settings_File);
         }
 
 

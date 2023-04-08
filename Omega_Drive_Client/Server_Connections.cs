@@ -21,13 +21,30 @@ namespace Omega_Drive_Client
 
         private static bool ValidateServerCertificate(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
         {
-            if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None)
+            bool is_certificate_valid = true;
+
+            if (sslPolicyErrors != System.Net.Security.SslPolicyErrors.None)
             {
-                return true;
+                if(Client_Application_Variables.Get_If_Self_Signed_Certificates_Are_Allowed() == true)
+                {
+                    for (int index = 0; index < chain.ChainStatus.Length; index++)
+                    {
+                        if (chain.ChainStatus[index].Status != System.Security.Cryptography.X509Certificates.X509ChainStatusFlags.UntrustedRoot)
+                        {
+                            is_certificate_valid = false;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    is_certificate_valid = false;
+                }
             }
 
-            return false;
+            return is_certificate_valid;
         }
+
 
 
 

@@ -1,4 +1,7 @@
-﻿using Avalonia.Interactivity;
+﻿using Avalonia.Controls;
+using Avalonia;
+using Avalonia.Interactivity;
+using Avalonia.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +14,13 @@ namespace Omega_Drive_Client
     {
         private static Notification_Messages_Processing Notification_Messages_Processing_Object = new Notification_Messages_Processing();
 
-
-        private static bool keep_user_logged_in = false;
+        internal static string log_in_session_key;
 
         private static string file_name = "app_settings.json";
+
+        private static string user_cache_file_name = "user_cache.json";
+
+
 
 
         protected static Payload_Serialization payload_serialization = new Payload_Serialization();
@@ -22,17 +28,35 @@ namespace Omega_Drive_Client
         private static Application_Settings application_Settings = new Application_Settings();
 
 
+
+
         protected static System.Net.IPAddress ip_address = System.Net.IPAddress.Parse("127.0.0.1");
 
         protected static int port_number = 1024;
 
-        protected static int current_protocol = 0; 
+        protected static int current_protocol = 0;
+
+        private static bool keep_user_logged_in = false;
+
+        private static bool allow_self_signed_certificates = false;
 
         protected static System.Security.Authentication.SslProtocols ssl_protocol = System.Security.Authentication.SslProtocols.Tls13;
 
+
+
+
         private delegate void Open_Log_In_Pannel();
 
+        internal delegate Task<string> Load_User_Log_In_Session_Key_Delegate();
 
+        internal static Load_User_Log_In_Session_Key_Delegate Load_User_Log_In_Session_Key_Delegate_Invoker = new Load_User_Log_In_Session_Key_Delegate(Load_User_Log_In_Session_Key);
+
+
+
+
+        private static Image delete_bin_image = new Image();
+
+        private static Image download_arrow_image = new Image();
 
 
         public enum SslProtocols
@@ -140,39 +164,12 @@ namespace Omega_Drive_Client
                 {
                     if(keep_user_logged_in == true)
                     {
+                        log_in_session_key = result;
+
                         User_Log_In_Key user_Log_In_Key = new User_Log_In_Key();
-                        user_Log_In_Key.log_in_key = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(user_Log_In_Key));
+                        user_Log_In_Key.log_in_key = Encoding.UTF8.GetBytes(result);
 
-
-
-                        byte[] serialized_log_in_session_key = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(user_Log_In_Key));
-
-
-
-
-                        System.IO.FileStream log_in_session_key_filestream = System.IO.File.Create("user_cache.json");
-
-                        try
-                        {
-                            await log_in_session_key_filestream.WriteAsync(serialized_log_in_session_key, 0, serialized_log_in_session_key.Length);
-                            await log_in_session_key_filestream.FlushAsync();
-                        }
-                        catch
-                        {
-                            if(log_in_session_key_filestream != null)
-                            {
-                                log_in_session_key_filestream.Close();
-                            }
-                        }
-                        finally
-                        {
-                            if (log_in_session_key_filestream != null)
-                            {
-                                log_in_session_key_filestream.Close();
-                                await log_in_session_key_filestream.DisposeAsync();
-                            }
-                        }
-
+                        await Create_User_Log_In_Session_Key_File(user_Log_In_Key);
                     }
 
                     MainWindow main = new MainWindow();
@@ -202,6 +199,138 @@ namespace Omega_Drive_Client
                     ((Password_Window)obj).Close();
                 }
             }
+
+
+
+            public void Log_In_Session_Key_Verification_Result_Processing(string result, object obj)
+            {
+                if(result == INotification_Messages.log_in_session_key_is_valid)
+                {
+                    log_in_session_key = result;
+
+                    MainWindow main = new MainWindow();
+                    main.Show();
+
+                    ((Log_In__Or__Register)obj).Close();
+                }
+            }
+
+
+
+            public async void Log_Out_Result_Processing(string result, object obj)
+            {
+                if(result == INotification_Messages.connection_failed_message)
+                {
+                    Notification_Window notification_Window = new Notification_Window(result);
+                    await notification_Window.ShowDialog((Log_In__Or__Register)obj);
+                }
+
+                if(System.IO.File.Exists(user_cache_file_name) == true)
+                {
+                    System.IO.File.Delete(user_cache_file_name);
+                }
+
+                Log_In__Or__Register log_In__Or__Register = new Log_In__Or__Register();
+                log_In__Or__Register.Show();
+
+                ((MainWindow)obj).Close();
+            }
+
+
+            public async void Files_Loadup_Result_Processing(string result, object obj)
+            {
+                delete_bin_image.Classes = Classes.Parse("Delete_Bin_Style");
+                delete_bin_image.Width = 30;
+
+                download_arrow_image.Classes = Classes.Parse("Download_Arrow_Style");
+                download_arrow_image.Width = 30;
+
+
+
+
+                Thickness forty_left_thickness = new Thickness(40, 0, 0, 0);
+                Thickness thirrty_left_thickness = new Thickness(40, 0, 0, 0);
+                Thickness ten_left_thickness = new Thickness(10, 0, 0, 0);
+
+
+                ((MainWindow)obj).User_Files_StackPanel.BeginInit();
+
+                ((MainWindow)obj).User_Files_StackPanel.Children.Clear();
+
+                StackPanel element = new StackPanel();
+                element.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+                element.Orientation = Avalonia.Layout.Orientation.Horizontal;
+                element.Background = Brushes.Black;
+
+                element.BeginInit();
+
+                TextBox filename_textbox = new TextBox();
+                filename_textbox.BorderBrush = Brushes.Black;
+                filename_textbox.Classes = Classes.Parse("Border");
+                filename_textbox.Width = 200;
+                filename_textbox.Text = "FileName.txt";
+                filename_textbox.IsReadOnly = true;
+                filename_textbox.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                filename_textbox.Background = Brushes.Black;
+                filename_textbox.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#43D3F7");
+
+                element.Children.Add(filename_textbox);
+
+                TextBlock file_size_label_textblock = new TextBlock();
+                file_size_label_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
+                file_size_label_textblock.Margin = forty_left_thickness;
+                file_size_label_textblock.Text = "Size:";
+                file_size_label_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                element.Children.Add(file_size_label_textblock);
+
+                TextBlock file_size_textblock = new TextBlock();
+                file_size_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
+                file_size_textblock.Margin = ten_left_thickness;
+                file_size_textblock.Text = "1000 MB";
+                file_size_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                element.Children.Add(file_size_textblock);
+
+                TextBlock date_uploaded_label_textblock = new TextBlock();
+                date_uploaded_label_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
+                date_uploaded_label_textblock.Margin = forty_left_thickness;
+                date_uploaded_label_textblock.Text = "Date uploaded:";
+                date_uploaded_label_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                element.Children.Add(date_uploaded_label_textblock);
+
+                TextBlock date_uploaded_textblock = new TextBlock();
+                date_uploaded_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
+                date_uploaded_textblock.Margin = ten_left_thickness;
+                date_uploaded_textblock.Text = "2023-04-09 17:25:54";
+                date_uploaded_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                element.Children.Add(date_uploaded_textblock);
+
+                Button file_download_button = new Button();
+                file_download_button.Margin = thirrty_left_thickness;
+                file_download_button.Classes = Classes.Parse("Transparent_Thin_Border");
+                file_download_button.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                file_download_button.Content = download_arrow_image;
+
+                element.Children.Add(file_download_button);
+
+                Button file_delete_button = new Button();
+                file_delete_button.Margin = ten_left_thickness;
+                file_delete_button.Classes = Classes.Parse("Transparent_Thin_Border");
+                file_delete_button.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                file_delete_button.Content = delete_bin_image;
+
+                element.Children.Add(file_delete_button);
+
+                element.EndInit();
+
+
+                ((MainWindow)obj).User_Files_StackPanel.Children.Add(element);
+
+                ((MainWindow)obj).User_Files_StackPanel.EndInit();
+            }
         }
 
 
@@ -222,16 +351,26 @@ namespace Omega_Drive_Client
         public enum Selected_Function
         {
             Log_In,
+            Log_Out,
             Register,
             Validate_Account,
             Authentificate_Account,
-            LoadSslCertificate
+            LoadSslCertificate,
+            Log_in_Session_Key_Verification
         }
 
 
 
 
+        internal static bool Get_If_Self_Signed_Certificates_Are_Allowed()
+        {
+            return allow_self_signed_certificates;
+        }
 
+        internal static void Set_If_Self_Signed_Certificates_Are_Allowed(bool are_self_signed_certificates_allowed)
+        {
+            allow_self_signed_certificates = are_self_signed_certificates_allowed;
+        }
 
         internal static void Set_Port_Number(int port)
         {
@@ -323,6 +462,10 @@ namespace Omega_Drive_Client
                 {
                     Notification_Messages_Processing_Object.Log_In_Result_Processing(result, obj);
                 }
+                else if (option == Selected_Function.Log_Out)
+                {
+                    Notification_Messages_Processing_Object.Log_Out_Result_Processing(result, obj);
+                }
                 else if (option == Selected_Function.Register)
                 {
                     Notification_Messages_Processing_Object.Register_Result_Processing(result, obj);
@@ -330,6 +473,10 @@ namespace Omega_Drive_Client
                 else if (option == Selected_Function.Validate_Account)
                 {
                     Notification_Messages_Processing_Object.Account_Validation_Result_Processing(result, obj);
+                }
+                else if (option == Selected_Function.Log_in_Session_Key_Verification)
+                {
+                    Notification_Messages_Processing_Object.Log_In_Session_Key_Verification_Result_Processing(result, obj);
                 }
 
             }, Avalonia.Threading.DispatcherPriority.Background);
@@ -383,6 +530,7 @@ namespace Omega_Drive_Client
                 application_Settings.IP_ADDRESS = ip_address.ToString();
                 application_Settings.PORT_NUMBER = port_number.ToString();
                 application_Settings.PROTOCOL_INDEX = current_protocol.ToString();
+                application_Settings.ALLOW_SELF_SIGNED_CERTIFICATES = allow_self_signed_certificates;
 
                 Get_And_Set_Current_Protocol();
 
@@ -435,6 +583,7 @@ namespace Omega_Drive_Client
                     ip_address = address;
                     port_number = Convert.ToInt32(application_Settings.PORT_NUMBER);
                     current_protocol = Convert.ToInt32(application_Settings.PROTOCOL_INDEX);
+                    allow_self_signed_certificates = application_Settings.ALLOW_SELF_SIGNED_CERTIFICATES;
 
                     Get_And_Set_Current_Protocol();
                 }
@@ -461,6 +610,79 @@ namespace Omega_Drive_Client
 
             return true;
         }
+
+
+        private static async Task<string> Load_User_Log_In_Session_Key()
+        {
+            string log_in_session_key = INotification_Messages.error_loading_user_cache;
+
+            if (System.IO.File.Exists(user_cache_file_name) == true)
+            {
+                System.IO.FileStream log_in_session_key_file = System.IO.File.Open(user_cache_file_name, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+
+                try
+                {
+                    byte[] log_in_session_key_bytes = new byte[log_in_session_key_file.Length];
+
+                    await log_in_session_key_file.ReadAsync(log_in_session_key_bytes, 0, log_in_session_key_bytes.Length);
+
+                    User_Log_In_Key deserialized_log_in_session_key = Newtonsoft.Json.JsonConvert.DeserializeObject<User_Log_In_Key>(Encoding.UTF8.GetString(log_in_session_key_bytes));
+
+                    log_in_session_key = Encoding.UTF8.GetString(deserialized_log_in_session_key.log_in_key);
+                }
+                catch
+                {
+                    if (log_in_session_key_file != null)
+                    {
+                        log_in_session_key_file.Close();
+                    }
+                }
+                finally
+                {
+                    if (log_in_session_key_file != null)
+                    {
+                        log_in_session_key_file.Close();
+                        await log_in_session_key_file.DisposeAsync();
+                    }
+                }
+            }
+
+            return log_in_session_key;
+        }
+
+
+
+        private static async Task<bool> Create_User_Log_In_Session_Key_File(User_Log_In_Key log_in_session_key_object)
+        {
+            byte[] serialized_log_in_session_key = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(log_in_session_key_object));
+
+
+            System.IO.FileStream log_in_session_key_filestream = System.IO.File.Create(user_cache_file_name);
+
+            try
+            {
+                await log_in_session_key_filestream.WriteAsync(serialized_log_in_session_key, 0, serialized_log_in_session_key.Length);
+                await log_in_session_key_filestream.FlushAsync();
+            }
+            catch
+            {
+                if (log_in_session_key_filestream != null)
+                {
+                    log_in_session_key_filestream.Close();
+                }
+            }
+            finally
+            {
+                if (log_in_session_key_filestream != null)
+                {
+                    log_in_session_key_filestream.Close();
+                    await log_in_session_key_filestream.DisposeAsync();
+                }
+            }
+
+            return true;
+        }
+
 
         private static async Task<bool> Update_Application_Settings_File()
         {

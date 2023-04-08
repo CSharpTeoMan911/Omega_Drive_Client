@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Omega_Drive_Client.MainWindow"
-        Title="Omega_Drive_Client" Initialized="Window_Initialized" Opened="Window_Opened">
+        Title="Omega_Drive_Client" Opened="Window_Opened" Opacity="0.6" Background="Transparent" TransparencyLevelHint="Transparent" Closing="Window_Closing">
 
 
 	<Window.Styles>
@@ -12,6 +12,52 @@
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="Foreground" Value="#65B7EB"/>
 		</Style>
+
+		<Style Selector="TextBlock.Transparent_Blue_Foreground">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="#43D3F7"/>
+		</Style>
+
+		<Style Selector="Button.Transparent_Thin_Border">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="#65B7EB"/>
+		</Style>
+
+		<Style Selector="Image.Delete_Bin_Style">
+			<Setter Property="Source" Value="/Assets/Delete_Bin.png"/>
+		</Style>
+
+		<Style Selector="Image.Download_Arrow_Style">
+			<Setter Property="Source" Value="/Assets/Download_Arrow.png"/>
+		</Style>
+		
+		
+		<Style Selector="Button.Menu_Buttons">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+						<GradientStop Color="#24628F" Offset="0"/>
+						<GradientStop Color="#112F45" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+
+			<Setter Property="FontWeight" Value="Bold"/>
+			
+			<Setter Property="Foreground" Value="#3490D1"/>
+			
+			<Setter Property="FontSize" Value="20"/>
+		</Style>
+
+
+		<Style Selector="Border:pointerover">
+			<Setter Property="Background" Value="Black"/>
+		</Style>
+
+		<Style Selector="Border:not(.pointerover)">
+			<Setter Property="Background" Value="Black"/>
+		</Style>
+		
 
 		<Style Selector="Button.Transparent:pointerover /template/ ContentPresenter">
 			<Setter Property="Button.Background" Value="Transparent"/>
@@ -25,6 +71,64 @@
 			</Setter>
 
 			<Setter Property="Button.BorderThickness" Value="2"/>
+		</Style>
+
+		
+		
+		
+		<Style Selector="Button.Transparent_Thin_Border:pointerover /template/ ContentPresenter">
+			<Setter Property="Button.Background" Value="Transparent"/>
+			<Setter Property="Button.BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+						<GradientStop Color="#448DC2" Offset="0"/>
+						<GradientStop Color="#43D3F7" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+
+			<Setter Property="Button.BorderThickness" Value="1"/>
+		</Style>
+
+
+		<Style Selector="Button.Menu_Buttons:pointerover /template/ ContentPresenter">
+			
+			
+			<Setter Property="Button.Background">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+						<GradientStop Color="#11343D" Offset="0"/>
+						<GradientStop Color="#1B5563" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+
+
+
+			<Setter Property="Button.Foreground">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+						<GradientStop Color="#41CDF0" Offset="0"/>
+						<GradientStop Color="#2C8BA3" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			
+			
+			
+
+
+			<Setter Property="Button.BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+						<GradientStop Color="#448DC2" Offset="0"/>
+						<GradientStop Color="#43D3F7" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+
+			
+			<Setter Property="Button.BorderThickness" Value="1"/>
 		</Style>
 
 	</Window.Styles>
@@ -54,16 +158,128 @@
 			<ColumnDefinition/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
+
+		<Rectangle Grid.ColumnSpan="9" Grid.RowSpan="9" Opacity="0.93">
+			<Rectangle.Fill>
+				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+					<GradientStop Color="#276BC7" Offset="0"/>
+					<GradientStop Color="#133561" Offset="1"/>
+				</LinearGradientBrush>
+			</Rectangle.Fill>
+		</Rectangle>
 		
 		<TextBlock Name="TEST" Grid.ColumnSpan="9" Grid.RowSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-		<Button Name="Main_Menu_Button" Classes="Transparent" Width="70" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,5,0,0" Grid.RowSpan="2" Grid.ColumnSpan="2">
-			<Button.Content>
-				<Image Source="/Assets/Omega_Drive.png" Width="{Binding $parent.Width}" Height="50" VerticalAlignment="Center"/>
-			</Button.Content>
-		</Button>
+
+		<StackPanel Orientation="Horizontal" Grid.ColumnSpan="3">
+			
+			<Button Name="Main_Menu_Button" Classes="Transparent" Height="70" Width="70" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,5,0,0" Grid.RowSpan="2" Grid.ColumnSpan="2" PointerEnter="Mouse_Over" PointerLeave="Mouse_Not_Over" Click="Open_Or_Close_The_Main_Menu">
+				<Button.Content>
+					<Image Source="/Assets/Omega_Drive.png" Width="{Binding $parent.Width}" Height="50" VerticalAlignment="Center"/>
+				</Button.Content>
+			</Button>
+
+			<TextBlock Name="Menu_TextBlock" Width="0" Margin="10,20,0,0" VerticalAlignment="Top" FontFamily="Impact" Foreground="#3490D1" FontSize="30" Text="Menu"/>
+
+		</StackPanel>
+
+
 		
-	
+
+		<Panel  Margin="0,30,0,0" Grid.Row="1" Grid.RowSpan="8" Grid.ColumnSpan="9">
+			<StackPanel Name="Upload_Stackpanel" IsEnabled="False" IsVisible="False">
+
+			</StackPanel>
+
+
+
+			<StackPanel Name="Download_Stackpanel">
+				
+				<ScrollViewer Name="User_Files_ScrollViewer">
+
+					<StackPanel Name="User_Files_StackPanel" HorizontalAlignment="Center">
+						
+						<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Background="Black">
+							<TextBox BorderBrush="Black" Classes="Border" Width="200" Text="FileName.txt" IsReadOnly="True" VerticalAlignment="Center" Background="Black" Foreground="#43D3F7"/>
+
+							<TextBlock Classes="Transparent_Blue_Foreground" Margin="40,0,0,0" Text="Size:" VerticalAlignment="Center"/>
+
+							<TextBlock Classes="Transparent_Blue_Foreground" Margin="10,0,0,0" Text="1000 MB" VerticalAlignment="Center"/>
+
+							<TextBlock Classes="Transparent_Blue_Foreground" Margin="40,0,0,0" Text="Date uploaded:" VerticalAlignment="Center"/>
+
+							<TextBlock Classes="Transparent_Blue_Foreground" Margin="10,0,0,0" Text="2023-04-09 17:25:54" VerticalAlignment="Center"/>
+
+							<Button Margin="30,0,0,0" Classes="Transparent_Thin_Border" VerticalAlignment="Center" >
+								<Button.Content>
+									<Image Classes="Delete_Bin_Style" Width="30"/>
+								</Button.Content>
+							</Button>
+
+							<Button Margin="10,0,0,0" Classes="Transparent_Thin_Border">
+								<Button.Content>
+									<Image Width="30" Source="/Assets/Download_Arrow.png"/>
+								</Button.Content>
+							</Button>
+
+						</StackPanel>	
+					</StackPanel>
+					
+					
+				</ScrollViewer>
+				
+			</StackPanel>	
+		</Panel>
+		
+		
+		
+
+		<StackPanel Name="Main_Menu_StackPanel" Width="0" Grid.Row="0" Margin="0,80,0,0" Grid.RowSpan="5" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="2">
+			
+			<StackPanel.Background>
+				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+					<GradientStop Color="#1B4A6B" Offset="0"/>
+					<GradientStop Color="#2A74A8" Offset="1"/>
+				</LinearGradientBrush>
+			</StackPanel.Background>
+
+			<Button Name="Download_Button" Classes="Menu_Buttons" Margin="10,10,20,20" Click="Open_The_File_Download_Section">
+				<Button.Content>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Assets/Download_Arrow.png" Height="30" HorizontalAlignment="Center"/>
+						<TextBlock Text="Download" Height="22" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button.Content>
+			</Button>
+
+			<Button Name="Upload_Button" Classes="Menu_Buttons"  Margin="10,0,20,20" Width="{Binding #Download_Button.Bounds.Width}" Click="Open_The_File_Upload_Section">
+				<Button.Content>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Assets/Upload_Arrow.png" Height="32" HorizontalAlignment="Center"/>
+						<TextBlock Text="Upload" Height="22" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button.Content>
+			</Button>
+
+			<Button Name="Settings_Button" Classes="Menu_Buttons" Margin="10,0,20,20" Width="{Binding #Download_Button.Bounds.Width}" Click="Open_The_Settings_Menu">
+				<Button.Content>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Assets/Settings_Wheel.png" Height="30" HorizontalAlignment="Center"/>
+						<TextBlock Text="Settings" Height="22" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button.Content>
+			</Button>
+
+			<Button Name="Log_Out_Button" Classes="Menu_Buttons" Margin="10,0,20,20" Width="{Binding #Download_Button.Bounds.Width}" Content="Log out" Click="Log_Out">
+				<Button.Content>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Assets/Log_Out_Door.png" Height="30" HorizontalAlignment="Center"/>
+						<TextBlock Text="Log out" Height="22" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button.Content>
+			</Button>
+			
+		</StackPanel>
 		
 	</Grid>
 </Window>

@@ -33,9 +33,17 @@ namespace Omega_Drive_Client
             Register_Password_TextBox.Text = String.Empty;
             Register_Repeat_Password_TextBox.Text = String.Empty;
 
+
+
             await Client_Application_Variables.Settings_File_Operation_Selector(Client_Application_Variables.Settings_File_Option.Read_Settings_File);
 
+            string log_in_session_key = await Client_Application_Variables.Load_User_Log_In_Session_Key_Delegate_Invoker.Invoke();
 
+            string result = Encoding.UTF8.GetString(await server_connections.Secure_Server_Connections("Verify log in session key", log_in_session_key, null));
+
+            Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Log_in_Session_Key_Verification, result, this);
+
+            this.IsEnabled = true;
         }
 
 

@@ -12,5 +12,6 @@ namespace Omega_Drive_Client
         public string PORT_NUMBER { get; set; }
         public string PROTOCOL_INDEX { get; set; }
 
+        public bool ALLOW_SELF_SIGNED_CERTIFICATES { get; set; }
     }
 }

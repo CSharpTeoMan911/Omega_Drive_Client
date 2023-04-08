@@ -23,6 +23,8 @@ namespace Omega_Drive_Client
         public static string invalid_ssl_certificate_password= "Invalid certificate password";
         public static string ssl_certificate_loadup_successful= "SSL certificate loadup successful";
         public static string account_authentification_successful = "Account authentification successful";
+        public static string log_in_session_key_is_valid = "Log in session key is valid";
+        public static string error_loading_user_cache = "Error loading user cache";
 
 
 
@@ -58,5 +60,11 @@ namespace Omega_Drive_Client
         public void Password_Window_Account_Authentification_Result_Processing(string result, Tuple<object, object> obj);
 
         public void Log_In_Or_Register_Window_Account_Authentification_Result_Processing(string result, object obj);
+
+        public void Log_In_Session_Key_Verification_Result_Processing(string result, object obj);
+
+        public void Log_Out_Result_Processing(string result, object obj);
+
+        public void Files_Loadup_Result_Processing(string result, object obj);
     }
 }
