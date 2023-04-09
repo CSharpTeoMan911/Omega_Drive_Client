@@ -51,12 +51,14 @@ namespace Omega_Drive_Client
         }
 
 
-        private void Window_Opened(object sender, EventArgs e)
+        private async void Window_Opened(object sender, EventArgs e)
         {
             Animation_Timer = new System.Timers.Timer();
             Animation_Timer.Elapsed += Animation_Timer_Elapsed;
             Animation_Timer.Interval = 10;
             Animation_Timer.Start();
+
+            await Load_User_Files();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -116,13 +118,11 @@ namespace Omega_Drive_Client
             Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Log_Out, result, this);
         }
 
-        private Task<bool> Load_User_Files()
+        private async Task<bool> Load_User_Files()
         {
-
-
-
-
-            return Task.FromResult(true);
+            string result = Encoding.UTF8.GetString(await Server_Connections.Secure_Server_Connections("Log out", Client_Application_Variables.log_in_session_key, null));
+            Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Log_Out, result, this);
+            return true;
         }
 
         private void Animation_Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)

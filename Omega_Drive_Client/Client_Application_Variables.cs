@@ -117,9 +117,7 @@ namespace Omega_Drive_Client
             public async void SslCertificate_Result_Processing(string result, object obj)
             {
                 Notification_Window notification_Window = new Notification_Window(result);
-                await notification_Window.ShowDialog((Password_Window)obj);
-
-                ((Password_Window)obj).Close();
+                await notification_Window.ShowDialog((Settings)obj);
             }
 
 
@@ -407,8 +405,6 @@ namespace Omega_Drive_Client
 
 
 
-
-
         internal static void Increment_Current_Protocol_Index()
         {
             if (current_protocol < 1)
@@ -470,6 +466,10 @@ namespace Omega_Drive_Client
                 {
                     Notification_Messages_Processing_Object.Register_Result_Processing(result, obj);
                 }
+                else if(option == Selected_Function.LoadSslCertificate)
+                {
+                    Notification_Messages_Processing_Object.SslCertificate_Result_Processing(result, obj);
+                }
                 else if (option == Selected_Function.Validate_Account)
                 {
                     Notification_Messages_Processing_Object.Account_Validation_Result_Processing(result, obj);
@@ -530,7 +530,6 @@ namespace Omega_Drive_Client
                 application_Settings.IP_ADDRESS = ip_address.ToString();
                 application_Settings.PORT_NUMBER = port_number.ToString();
                 application_Settings.PROTOCOL_INDEX = current_protocol.ToString();
-                application_Settings.ALLOW_SELF_SIGNED_CERTIFICATES = allow_self_signed_certificates;
 
                 Get_And_Set_Current_Protocol();
 
@@ -583,7 +582,6 @@ namespace Omega_Drive_Client
                     ip_address = address;
                     port_number = Convert.ToInt32(application_Settings.PORT_NUMBER);
                     current_protocol = Convert.ToInt32(application_Settings.PROTOCOL_INDEX);
-                    allow_self_signed_certificates = application_Settings.ALLOW_SELF_SIGNED_CERTIFICATES;
 
                     Get_And_Set_Current_Protocol();
                 }

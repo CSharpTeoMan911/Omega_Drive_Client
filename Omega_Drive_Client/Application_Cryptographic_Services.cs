@@ -8,13 +8,13 @@ namespace Omega_Drive_Client
 {
     class Application_Cryptographic_Services
     {
-        internal Task<string> Load_Certificate_Authority(string certificate_path, string password)
+        internal async Task<string> Load_Certificate_Authority(string certificate_path)
         {
             string certificate_loadup_result = INotification_Messages.invalid_ssl_certificate_password;
 
             try
             {
-                System.Security.Cryptography.X509Certificates.X509Certificate2 server_certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(certificate_path, password);
+                System.Security.Cryptography.X509Certificates.X509Certificate2 server_certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(certificate_path);
 
                 try
                 {
@@ -59,7 +59,7 @@ namespace Omega_Drive_Client
 
             }
 
-            return Task.FromResult(certificate_loadup_result);
+            return certificate_loadup_result;
         }
     }
 }

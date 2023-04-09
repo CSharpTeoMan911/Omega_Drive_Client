@@ -21,28 +21,17 @@ namespace Omega_Drive_Client
 
         private static bool ValidateServerCertificate(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
         {
-            bool is_certificate_valid = true;
-
-            if (sslPolicyErrors != System.Net.Security.SslPolicyErrors.None)
+            if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None)
             {
-                if(Client_Application_Variables.Get_If_Self_Signed_Certificates_Are_Allowed() == true)
-                {
-                    for (int index = 0; index < chain.ChainStatus.Length; index++)
-                    {
-                        if (chain.ChainStatus[index].Status != System.Security.Cryptography.X509Certificates.X509ChainStatusFlags.UntrustedRoot)
-                        {
-                            is_certificate_valid = false;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    is_certificate_valid = false;
-                }
+                return true;
+            }
+            else if(sslPolicyErrors == System.Net.Security.SslPolicyErrors.RemoteCertificateNameMismatch)
+            {
+                return true;
             }
 
-            return is_certificate_valid;
+
+            return false;
         }
 
 
@@ -80,7 +69,7 @@ namespace Omega_Drive_Client
 
                     try
                     {
-                        client_secure_socket_layer_stream.AuthenticateAsClient("Omega_Drive_Certificate", null, ssl_protocol, true);
+                        client_secure_socket_layer_stream.AuthenticateAsClient(String.Empty, null, ssl_protocol, true);
 
                         int bytes_per_second = await Connection_Speed_Calculator(ip_address, client_secure_socket_layer_stream);
 

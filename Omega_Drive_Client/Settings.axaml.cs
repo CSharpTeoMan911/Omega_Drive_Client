@@ -21,6 +21,7 @@ namespace Omega_Drive_Client
         */
 
         private static System.Net.IPAddress address = System.Net.IPAddress.Parse("127.0.0.1");
+        private Application_Cryptographic_Services Application_Cryptographic_Services = new Application_Cryptographic_Services();
 
         public Settings()
         {
@@ -32,15 +33,6 @@ namespace Omega_Drive_Client
             address = Client_Application_Variables.Get_IP_Address();
             IP_TextBox.Text = address.ToString();
             Port_TextBox.Text = (Client_Application_Variables.Get_Port_Number()).ToString();
-
-            if(Client_Application_Variables.Get_If_Self_Signed_Certificates_Are_Allowed() == true)
-            {
-                Allow_Self_Signed_Certificates_Checkbox.IsChecked = true;
-            }
-            else
-            {
-                Allow_Self_Signed_Certificates_Checkbox.IsChecked = false;
-            }
 
             Choose_Protocol("Current");
         }
@@ -95,18 +87,6 @@ namespace Omega_Drive_Client
         }
 
 
-        private async void Allow_Self_Signed_Certificates(object obj, RoutedEventArgs e)
-        {
-            Client_Application_Variables.Set_If_Self_Signed_Certificates_Are_Allowed(true);
-            await Client_Application_Variables.Settings_File_Operation_Selector(Client_Application_Variables.Settings_File_Option.Update_Settings_File);
-        }
-
-        private async void Do_Not_Allow_Self_Signed_Certificates(object obj, RoutedEventArgs e)
-        {
-            Client_Application_Variables.Set_If_Self_Signed_Certificates_Are_Allowed(false);
-            await Client_Application_Variables.Settings_File_Operation_Selector(Client_Application_Variables.Settings_File_Option.Update_Settings_File);
-        }
-
 
         private async void Load_SSL_Certificate(object obj, RoutedEventArgs e)
         {
@@ -128,14 +108,13 @@ namespace Omega_Drive_Client
                     certificate_file_dialog.AllowMultiple = false;
 
                     string[] certificate_path = await certificate_file_dialog.ShowAsync(this);
-                    
 
                     if(certificate_path != null)
                     {
                         if(this != null)
                         {
-                            Password_Window password = new Password_Window(Password_Window.Password_Function_Selection.SslCertificate, certificate_path[0]);
-                            await password.ShowDialog(this);
+                            string cetificate_upload_result = await Application_Cryptographic_Services.Load_Certificate_Authority(certificate_path[0]);
+                            Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.LoadSslCertificate, cetificate_upload_result, this);
                         }
                     }
                 }

@@ -199,30 +199,6 @@
 
 					<StackPanel Name="User_Files_StackPanel" HorizontalAlignment="Center">
 						
-						<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Background="Black">
-							<TextBox BorderBrush="Black" Classes="Border" Width="200" Text="FileName.txt" IsReadOnly="True" VerticalAlignment="Center" Background="Black" Foreground="#43D3F7"/>
-
-							<TextBlock Classes="Transparent_Blue_Foreground" Margin="40,0,0,0" Text="Size:" VerticalAlignment="Center"/>
-
-							<TextBlock Classes="Transparent_Blue_Foreground" Margin="10,0,0,0" Text="1000 MB" VerticalAlignment="Center"/>
-
-							<TextBlock Classes="Transparent_Blue_Foreground" Margin="40,0,0,0" Text="Date uploaded:" VerticalAlignment="Center"/>
-
-							<TextBlock Classes="Transparent_Blue_Foreground" Margin="10,0,0,0" Text="2023-04-09 17:25:54" VerticalAlignment="Center"/>
-
-							<Button Margin="30,0,0,0" Classes="Transparent_Thin_Border" VerticalAlignment="Center" >
-								<Button.Content>
-									<Image Classes="Delete_Bin_Style" Width="30"/>
-								</Button.Content>
-							</Button>
-
-							<Button Margin="10,0,0,0" Classes="Transparent_Thin_Border">
-								<Button.Content>
-									<Image Width="30" Source="/Assets/Download_Arrow.png"/>
-								</Button.Content>
-							</Button>
-
-						</StackPanel>	
 					</StackPanel>
 					
 					

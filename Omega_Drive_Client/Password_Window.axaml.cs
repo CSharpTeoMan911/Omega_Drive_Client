@@ -16,7 +16,6 @@ namespace Omega_Drive_Client
 
         private readonly Dictionary<Password_Function_Selection, string> option_value_pair = new Dictionary<Password_Function_Selection, string>()
         {
-            { Password_Function_Selection.SslCertificate, "Certificate password" },
             { Password_Function_Selection.LogIn, "Log in code" },
             { Password_Function_Selection.UnValidatedAccount, "Account validation code" }
         };
@@ -32,7 +31,6 @@ namespace Omega_Drive_Client
 
         public enum Password_Function_Selection
         {
-            SslCertificate,
             LogIn,
             UnValidatedAccount
         }
@@ -69,7 +67,6 @@ namespace Omega_Drive_Client
 
         private void Window_Opened(object obj, EventArgs e)
         {
-            option_delegate_value_pair.TryAdd(Password_Function_Selection.SslCertificate, new Option_Function_Invoker(Accept_Ssl_Certificate_Password));
             option_delegate_value_pair.TryAdd(Password_Function_Selection.LogIn, new Option_Function_Invoker(Accept_Log_In_Code));
             option_delegate_value_pair.TryAdd(Password_Function_Selection.UnValidatedAccount, new Option_Function_Invoker(Accept_Account_Validation_Code));
 
@@ -85,21 +82,11 @@ namespace Omega_Drive_Client
 
         private void Accept_Password(object obj, RoutedEventArgs e)
         {
-            Option_Function_Invoker option_Function_Invoker = new Option_Function_Invoker(Accept_Ssl_Certificate_Password);
+            Option_Function_Invoker option_Function_Invoker = new Option_Function_Invoker(Accept_Log_In_Code);
 
             option_delegate_value_pair.TryGetValue(Option, out option_Function_Invoker);
 
             option_Function_Invoker.Invoke();
-        }
-
-
-
-
-        private async void Accept_Ssl_Certificate_Password()
-        {
-            string cetificate_upload_result = await application_cryptographic_services.Load_Certificate_Authority(Path, Password_TextBox.Text);
-
-            Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.LoadSslCertificate, cetificate_upload_result, this);
         }
 
 

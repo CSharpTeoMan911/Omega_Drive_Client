@@ -57,7 +57,7 @@
 		<TextBlock Classes="TextBlock_Propriety" Grid.RowSpan="2" Grid.ColumnSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontWeight="Bold" FontSize="20" Text="Settings"/>
 
 		
-		<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="9">
+		<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="SSL Protocol"/>
 
 			
@@ -84,7 +84,7 @@
 		
 		
 		
-		<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Grid.RowSpan="4" Grid.ColumnSpan="9">
+		<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			
 			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Server IP address"/>
 			
@@ -95,17 +95,12 @@
 		</StackPanel>
 
 		
-		<StackPanel Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="3" Grid.RowSpan="5" Grid.ColumnSpan="9">
+		<StackPanel Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Server port number"/>
 			<TextBox Name="Port_TextBox" MaxWidth="10" HorizontalAlignment="Center" VerticalAlignment="Center" LostFocus="Port_TextBox_Lost_Focus"/>
 		</StackPanel>
-
-		<StackPanel  Margin="0,20,0,0" Grid.Row="5" Grid.RowSpan="4" Grid.ColumnSpan="9" HorizontalAlignment="Center" Orientation="Horizontal">
-			<TextBlock Margin="0,0,20,0" Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Allow self signed certificates"/>
-			<CheckBox Name="Allow_Self_Signed_Certificates_Checkbox" Checked="Allow_Self_Signed_Certificates" Unchecked="Do_Not_Allow_Self_Signed_Certificates"/>
-		</StackPanel>
 		
-		<StackPanel Margin="0,0,0,20" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="8" Grid.RowSpan="3" Grid.ColumnSpan="9">
+		<StackPanel Margin="0,0,0,20" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="8" Grid.RowSpan="2" Grid.ColumnSpan="9">
 			<TextBlock Classes="TextBlock_Propriety" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Corbel" FontSize="15" Text="Load trusted server SSL&#x0a;Certificate Authority"/>
 			
 			<Button Height="40" Width="40" Margin="20,0,0,0" Click="Load_SSL_Certificate">
