@@ -41,7 +41,7 @@ namespace Omega_Drive_Client
 
             string result = Encoding.UTF8.GetString(await server_connections.Secure_Server_Connections("Verify log in session key", log_in_session_key, null));
 
-            Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Log_in_Session_Key_Verification, result, this);
+            Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Log_in_Session_Key_Verification, result, log_in_session_key, this);
 
             this.IsEnabled = true;
         }

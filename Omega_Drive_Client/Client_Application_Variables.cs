@@ -27,6 +27,8 @@ namespace Omega_Drive_Client
 
         private static Application_Settings application_Settings = new Application_Settings();
 
+        private static Server_Connections Server_Connections = new Server_Connections();
+
 
 
 
@@ -54,9 +56,6 @@ namespace Omega_Drive_Client
 
 
 
-        private static Image delete_bin_image = new Image();
-
-        private static Image download_arrow_image = new Image();
 
 
         public enum SslProtocols
@@ -68,7 +67,7 @@ namespace Omega_Drive_Client
 
 
 
-        private sealed class Notification_Messages_Processing:INotification_Messages
+        private sealed class Notification_Messages_Processing : INotification_Messages
         {
             public async void Log_In_Result_Processing(string result, object obj)
             {
@@ -160,10 +159,10 @@ namespace Omega_Drive_Client
                 }
                 else
                 {
-                    if(keep_user_logged_in == true)
-                    {
-                        log_in_session_key = result;
+                    log_in_session_key = result;
 
+                    if (keep_user_logged_in == true)
+                    {
                         User_Log_In_Key user_Log_In_Key = new User_Log_In_Key();
                         user_Log_In_Key.log_in_key = Encoding.UTF8.GetBytes(result);
 
@@ -200,11 +199,11 @@ namespace Omega_Drive_Client
 
 
 
-            public void Log_In_Session_Key_Verification_Result_Processing(string result, object obj)
+            public void Log_In_Session_Key_Verification_Result_Processing(string result, string retrieved_log_in_session_key, object obj)
             {
-                if(result == INotification_Messages.log_in_session_key_is_valid)
+                if (result == INotification_Messages.log_in_session_key_is_valid)
                 {
-                    log_in_session_key = result;
+                    log_in_session_key = retrieved_log_in_session_key;
 
                     MainWindow main = new MainWindow();
                     main.Show();
@@ -217,13 +216,13 @@ namespace Omega_Drive_Client
 
             public async void Log_Out_Result_Processing(string result, object obj)
             {
-                if(result == INotification_Messages.connection_failed_message)
+                if (result == INotification_Messages.connection_failed_message)
                 {
                     Notification_Window notification_Window = new Notification_Window(result);
-                    await notification_Window.ShowDialog((Log_In__Or__Register)obj);
+                    await notification_Window.ShowDialog((MainWindow)obj);
                 }
 
-                if(System.IO.File.Exists(user_cache_file_name) == true)
+                if (System.IO.File.Exists(user_cache_file_name) == true)
                 {
                     System.IO.File.Delete(user_cache_file_name);
                 }
@@ -235,99 +234,169 @@ namespace Omega_Drive_Client
             }
 
 
-            public async void Files_Loadup_Result_Processing(string result, object obj)
+            public async void Retrieve_User_Files_Information(string result, object obj)
             {
-                delete_bin_image.Classes = Classes.Parse("Delete_Bin_Style");
-                delete_bin_image.Width = 30;
 
-                download_arrow_image.Classes = Classes.Parse("Download_Arrow_Style");
-                download_arrow_image.Width = 30;
+                if (result != INotification_Messages.connection_failed_message && result != INotification_Messages.log_in_session_key_invalid)
+                {
 
-
-
-
-                Thickness forty_left_thickness = new Thickness(40, 0, 0, 0);
-                Thickness thirrty_left_thickness = new Thickness(40, 0, 0, 0);
-                Thickness ten_left_thickness = new Thickness(10, 0, 0, 0);
+                    try
+                    {
+                        User_Files_Info user_Files_Info = Newtonsoft.Json.JsonConvert.DeserializeObject<User_Files_Info>(result);
 
 
-                ((MainWindow)obj).User_Files_StackPanel.BeginInit();
-
-                ((MainWindow)obj).User_Files_StackPanel.Children.Clear();
-
-                StackPanel element = new StackPanel();
-                element.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-                element.Orientation = Avalonia.Layout.Orientation.Horizontal;
-                element.Background = Brushes.Black;
-
-                element.BeginInit();
-
-                TextBox filename_textbox = new TextBox();
-                filename_textbox.BorderBrush = Brushes.Black;
-                filename_textbox.Classes = Classes.Parse("Border");
-                filename_textbox.Width = 200;
-                filename_textbox.Text = "FileName.txt";
-                filename_textbox.IsReadOnly = true;
-                filename_textbox.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-                filename_textbox.Background = Brushes.Black;
-                filename_textbox.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#43D3F7");
-
-                element.Children.Add(filename_textbox);
-
-                TextBlock file_size_label_textblock = new TextBlock();
-                file_size_label_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
-                file_size_label_textblock.Margin = forty_left_thickness;
-                file_size_label_textblock.Text = "Size:";
-                file_size_label_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-
-                element.Children.Add(file_size_label_textblock);
-
-                TextBlock file_size_textblock = new TextBlock();
-                file_size_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
-                file_size_textblock.Margin = ten_left_thickness;
-                file_size_textblock.Text = "1000 MB";
-                file_size_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-
-                element.Children.Add(file_size_textblock);
-
-                TextBlock date_uploaded_label_textblock = new TextBlock();
-                date_uploaded_label_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
-                date_uploaded_label_textblock.Margin = forty_left_thickness;
-                date_uploaded_label_textblock.Text = "Date uploaded:";
-                date_uploaded_label_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-
-                element.Children.Add(date_uploaded_label_textblock);
-
-                TextBlock date_uploaded_textblock = new TextBlock();
-                date_uploaded_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
-                date_uploaded_textblock.Margin = ten_left_thickness;
-                date_uploaded_textblock.Text = "2023-04-09 17:25:54";
-                date_uploaded_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-
-                element.Children.Add(date_uploaded_textblock);
-
-                Button file_download_button = new Button();
-                file_download_button.Margin = thirrty_left_thickness;
-                file_download_button.Classes = Classes.Parse("Transparent_Thin_Border");
-                file_download_button.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-                file_download_button.Content = download_arrow_image;
-
-                element.Children.Add(file_download_button);
-
-                Button file_delete_button = new Button();
-                file_delete_button.Margin = ten_left_thickness;
-                file_delete_button.Classes = Classes.Parse("Transparent_Thin_Border");
-                file_delete_button.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-                file_delete_button.Content = delete_bin_image;
-
-                element.Children.Add(file_delete_button);
-
-                element.EndInit();
 
 
-                ((MainWindow)obj).User_Files_StackPanel.Children.Add(element);
+                        Thickness forty_left_thickness = new Thickness(40, 0, 0, 0);
+                        Thickness thirrty_left_thickness = new Thickness(40, 0, 0, 0);
+                        Thickness ten_left_thickness = new Thickness(10, 0, 0, 0);
 
-                ((MainWindow)obj).User_Files_StackPanel.EndInit();
+
+
+
+                        ((MainWindow)obj).User_Files_StackPanel.BeginInit();
+
+                        ((MainWindow)obj).User_Files_StackPanel.Children.Clear();
+
+
+
+                        for (int index = 0; index < user_Files_Info.FILE_IDS.Length; index++)
+                        {
+
+                            Image delete_bin_image = new Image();
+                            delete_bin_image.Classes = Classes.Parse("Delete_Bin_Style");
+                            delete_bin_image.Width = 30;
+
+
+                            Image download_arrow_image = new Image();
+                            download_arrow_image.Classes = Classes.Parse("Download_Arrow_Style");
+                            download_arrow_image.Width = 30;
+
+
+                            StackPanel element = new StackPanel();
+                            element.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+                            element.Orientation = Avalonia.Layout.Orientation.Horizontal;
+                            element.Background = Brushes.Black;
+
+
+
+
+
+                            element.BeginInit();
+
+                            TextBox filename_textbox = new TextBox();
+                            filename_textbox.BorderBrush = Brushes.Black;
+                            filename_textbox.Classes = Classes.Parse("Border");
+                            filename_textbox.Width = 200;
+                            filename_textbox.Text = Encoding.UTF8.GetString(user_Files_Info.FILE_NAMES[index]);
+                            filename_textbox.IsReadOnly = true;
+                            filename_textbox.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                            filename_textbox.Background = Brushes.Black;
+                            filename_textbox.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#43D3F7");
+
+                            element.Children.Add(filename_textbox);
+
+
+
+
+                            TextBlock file_size_label_textblock = new TextBlock();
+                            file_size_label_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
+                            file_size_label_textblock.Margin = forty_left_thickness;
+                            file_size_label_textblock.Text = "Size:";
+                            file_size_label_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                            element.Children.Add(file_size_label_textblock);
+
+
+
+
+                            TextBlock file_size_textblock = new TextBlock();
+                            file_size_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
+                            file_size_textblock.Margin = ten_left_thickness;
+                            file_size_textblock.Text = user_Files_Info.FILE_SIZES[index].ToString() + " MB";
+                            file_size_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                            element.Children.Add(file_size_textblock);
+
+
+
+
+                            TextBlock date_uploaded_label_textblock = new TextBlock();
+                            date_uploaded_label_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
+                            date_uploaded_label_textblock.Margin = forty_left_thickness;
+                            date_uploaded_label_textblock.Text = "Date uploaded:";
+                            date_uploaded_label_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                            element.Children.Add(date_uploaded_label_textblock);
+
+
+
+
+                            TextBlock date_uploaded_textblock = new TextBlock();
+                            date_uploaded_textblock.Classes = Classes.Parse("Transparent_Blue_Foreground");
+                            date_uploaded_textblock.Margin = ten_left_thickness;
+                            date_uploaded_textblock.Text = Encoding.UTF8.GetString(user_Files_Info.FILE_UPLOAD_DATES[index]);
+                            date_uploaded_textblock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                            element.Children.Add(date_uploaded_textblock);
+
+
+
+
+                            Button file_download_button = new Button();
+                            file_download_button.Margin = thirrty_left_thickness;
+                            file_download_button.Classes = Classes.Parse("Transparent_Thin_Border");
+                            file_download_button.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                            file_download_button.Content = download_arrow_image;
+                            file_download_button.Name = user_Files_Info.FILE_IDS[index].ToString() + "_download";
+                            file_download_button.Click += File_download_button_Click;
+
+                            element.Children.Add(file_download_button);
+
+
+
+
+                            Button file_delete_button = new Button();
+                            file_delete_button.Margin = ten_left_thickness;
+                            file_delete_button.Classes = Classes.Parse("Transparent_Thin_Border");
+                            file_delete_button.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                            file_delete_button.Content = delete_bin_image;
+                            file_delete_button.Name = user_Files_Info.FILE_IDS[index].ToString() + "_delete";
+                            file_delete_button.Click += File_delete_button_Click;
+
+                            element.Children.Add(file_delete_button);
+
+                            element.EndInit();
+
+
+                            ((MainWindow)obj).User_Files_StackPanel.Children.Add(element);
+
+                        }
+
+                       ((MainWindow)obj).User_Files_StackPanel.EndInit();
+
+                    }
+                    catch
+                    {
+
+                    }
+
+
+                }
+            }
+
+            private async void File_delete_button_Click(object? sender, RoutedEventArgs e)
+            {
+                StringBuilder file_id_builder = new StringBuilder(((Button)sender).Name);
+                file_id_builder.Remove(file_id_builder.Length - "_delete".Length, "_delete".Length);
+
+                await Server_Connections.Secure_Server_Connections("Delete user file", log_in_session_key, Encoding.UTF8.GetBytes(file_id_builder.ToString()));
+            }
+
+            private void File_download_button_Click(object? sender, RoutedEventArgs e)
+            {
+                StringBuilder file_id_builder = new StringBuilder(((Button)sender).Name);
+                file_id_builder.Remove(file_id_builder.Length - "_download".Length, "_download".Length);
             }
         }
 
@@ -354,7 +423,8 @@ namespace Omega_Drive_Client
             Validate_Account,
             Authentificate_Account,
             LoadSslCertificate,
-            Log_in_Session_Key_Verification
+            Log_in_Session_Key_Verification,
+            User_Files_Information_Retrieval
         }
 
 
@@ -474,9 +544,9 @@ namespace Omega_Drive_Client
                 {
                     Notification_Messages_Processing_Object.Account_Validation_Result_Processing(result, obj);
                 }
-                else if (option == Selected_Function.Log_in_Session_Key_Verification)
+                else if (option == Selected_Function.User_Files_Information_Retrieval)
                 {
-                    Notification_Messages_Processing_Object.Log_In_Session_Key_Verification_Result_Processing(result, obj);
+                    Notification_Messages_Processing_Object.Retrieve_User_Files_Information(result, obj);
                 }
 
             }, Avalonia.Threading.DispatcherPriority.Background);
@@ -487,8 +557,24 @@ namespace Omega_Drive_Client
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
+                if(option == Selected_Function.Authentificate_Account)
+                {
+                    Notification_Messages_Processing_Object.Password_Window_Account_Authentification_Result_Processing(result, obj);
+                }
 
-                Notification_Messages_Processing_Object.Password_Window_Account_Authentification_Result_Processing(result, obj);
+            }, Avalonia.Threading.DispatcherPriority.Background);
+        }
+
+
+        internal static void Function_Result_Processing(Selected_Function option, string result, string retrieved_log_in_session_key, object obj)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                if (option == Selected_Function.Log_in_Session_Key_Verification)
+
+                {
+                    Notification_Messages_Processing_Object.Log_In_Session_Key_Verification_Result_Processing(result, retrieved_log_in_session_key, obj);
+                }
 
             }, Avalonia.Threading.DispatcherPriority.Background);
         }

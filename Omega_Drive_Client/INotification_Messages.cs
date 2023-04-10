@@ -25,6 +25,7 @@ namespace Omega_Drive_Client
         public static string account_authentification_successful = "Account authentification successful";
         public static string log_in_session_key_is_valid = "Log in session key is valid";
         public static string error_loading_user_cache = "Error loading user cache";
+        protected static string log_in_session_key_invalid = "Log in session key is invalid";
 
 
 
@@ -61,10 +62,10 @@ namespace Omega_Drive_Client
 
         public void Log_In_Or_Register_Window_Account_Authentification_Result_Processing(string result, object obj);
 
-        public void Log_In_Session_Key_Verification_Result_Processing(string result, object obj);
+        public void Log_In_Session_Key_Verification_Result_Processing(string result, string retrieved_log_in_session_key, object obj);
 
         public void Log_Out_Result_Processing(string result, object obj);
 
-        public void Files_Loadup_Result_Processing(string result, object obj);
+        public void Retrieve_User_Files_Information(string result, object obj);
     }
 }

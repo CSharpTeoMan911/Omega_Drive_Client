@@ -197,10 +197,7 @@
 				
 				<ScrollViewer Name="User_Files_ScrollViewer">
 
-					<StackPanel Name="User_Files_StackPanel" HorizontalAlignment="Center">
-						
-					</StackPanel>
-					
+					<StackPanel Name="User_Files_StackPanel" Background="Black" HorizontalAlignment="Center"/>
 					
 				</ScrollViewer>
 				
