@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
         x:Class="Omega_Drive_Client.Notification_Window"
-        Title="Notification_Window" Opened="Window_Opened" CanResize="False" MaxWidth="300" MaxHeight="200" Background="Transparent" TransparencyLevelHint="Transparent" Opacity="0.6">
+        Title="Notification" Opened="Window_Opened" CanResize="False" MaxWidth="300" MaxHeight="200" Background="Transparent" TransparencyLevelHint="Transparent" Opacity="0.6" Icon="/Assets/Omega_Drive.png">
 
 	<Grid>
 		<Grid.RowDefinitions>

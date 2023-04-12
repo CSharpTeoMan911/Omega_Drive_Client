@@ -1,0 +1,98 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Omega_Drive_Client.File_Upload_Window" MinWidth="230" MaxWidth="230" MinHeight="180" MaxHeight="180" 
+		Title="Upload" CanResize="False" TransparencyLevelHint="Transparent" Opacity="0.8" Background="Transparent" Icon="/Assets/Omega_Drive.png">
+
+	<Window.Styles>
+		<Style Selector="Button.Blue_Thin_Border">
+			<Setter Property="Foreground" Value="#65B7EB"/>
+		</Style>
+
+		<Style Selector="Button.Blue_Thin_Border:pointerover /template/ ContentPresenter">
+			<Setter Property="Button.Background" Value="Transparent"/>
+			<Setter Property="Button.BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+						<GradientStop Color="#448DC2" Offset="0"/>
+						<GradientStop Color="#43D3F7" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+
+			<Setter Property="Button.BorderThickness" Value="1"/>
+		</Style>
+	</Window.Styles>
+	
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<Rectangle Grid.ColumnSpan="9" Grid.RowSpan="9">
+			<Rectangle.Fill>
+				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+					<GradientStop Color="#145378" Offset="0"/>
+					<GradientStop Color="#0E3952" Offset="1"/>
+				</LinearGradientBrush>
+			</Rectangle.Fill>
+		</Rectangle>
+
+
+
+	
+		<TextBlock  Grid.RowSpan="4" Grid.ColumnSpan="9" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontFamily="Corbel Light" MaxHeight="66" MaxWidth="290" TextWrapping="Wrap" FontSize="23">
+			<TextBlock.Text>
+				Upload a file
+or folder
+			</TextBlock.Text>
+			
+			
+			<TextBlock.Foreground>
+				<LinearGradientBrush EndPoint="5%,0%" StartPoint="0%,100%">
+					<GradientStop Color="#269DE0" Offset="0"/>
+					<GradientStop Color="#1E7AB0" Offset="1"/>
+				</LinearGradientBrush>
+			</TextBlock.Foreground>
+		</TextBlock>
+		
+		
+		<StackPanel Margin="0,0,0,20" Grid.RowSpan="9" Grid.ColumnSpan="9" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+			
+			<StackPanel Orientation="Horizontal">
+				<Button Classes="Blue_Thin_Border" Margin="0,0,30,0">
+					<Image Height="35" Source="/Assets/Upload_File.png"/>
+				</Button>
+
+				<Button Classes="Blue_Thin_Border">
+					<Image Height="35" Source="/Assets/Upload_Folder.png"/>
+				</Button>
+			</StackPanel>
+			
+		</StackPanel>
+	</Grid>
+	
+	
+</Window>

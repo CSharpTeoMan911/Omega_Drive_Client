@@ -29,6 +29,8 @@ namespace Omega_Drive_Client
 
         private static Server_Connections Server_Connections = new Server_Connections();
 
+        private static MainWindow Current_Main_Window_Instance = new MainWindow();
+
 
 
 
@@ -49,12 +51,17 @@ namespace Omega_Drive_Client
 
         private delegate void Open_Log_In_Pannel();
 
+        private delegate void Load_User_Files_Delegate(string log_in_session_key, byte[] file_id);
+
+        private delegate void Download_User_Files_Delegate(string log_in_session_key, string file_name, byte[] file_id);
+
         internal delegate Task<string> Load_User_Log_In_Session_Key_Delegate();
 
         internal static Load_User_Log_In_Session_Key_Delegate Load_User_Log_In_Session_Key_Delegate_Invoker = new Load_User_Log_In_Session_Key_Delegate(Load_User_Log_In_Session_Key);
 
 
 
+        private static Dictionary<long, bool> file_structure_info = new Dictionary<long, bool>();
 
 
 
@@ -149,13 +156,15 @@ namespace Omega_Drive_Client
 
 
 
-            public async void Password_Window_Account_Authentification_Result_Processing(string result, Tuple<object, object> obj)
+            public async void Password_Window_Account_Authentification_Result_Processing(string result, object obj)
             {
+                Tuple<object, object> Object = (Tuple<object, object>)obj;
+
 
                 if (result == INotification_Messages.invalid_log_in_code || result == INotification_Messages.connection_failed_message)
                 {
                     Notification_Window notification_Window = new Notification_Window(result);
-                    await notification_Window.ShowDialog((Password_Window)obj.Item1);
+                    await notification_Window.ShowDialog((Password_Window)Object.Item1);
                 }
                 else
                 {
@@ -172,8 +181,8 @@ namespace Omega_Drive_Client
                     MainWindow main = new MainWindow();
                     main.Show();
 
-                    ((Password_Window)obj.Item1).Close();
-                    ((Log_In__Or__Register)obj.Item2).Close();
+                    ((Password_Window)Object.Item1).Close();
+                    ((Log_In__Or__Register)Object.Item2).Close();
                 }
             }
 
@@ -199,16 +208,18 @@ namespace Omega_Drive_Client
 
 
 
-            public void Log_In_Session_Key_Verification_Result_Processing(string result, string retrieved_log_in_session_key, object obj)
+            public void Log_In_Session_Key_Verification_Result_Processing(string result, object obj)
             {
+                Tuple<string, object> Object = (Tuple<string, object>)obj;
+
                 if (result == INotification_Messages.log_in_session_key_is_valid)
                 {
-                    log_in_session_key = retrieved_log_in_session_key;
+                    log_in_session_key = Object.Item1;
 
                     MainWindow main = new MainWindow();
                     main.Show();
 
-                    ((Log_In__Or__Register)obj).Close();
+                    ((Log_In__Or__Register)Object.Item2).Close();
                 }
             }
 
@@ -234,7 +245,7 @@ namespace Omega_Drive_Client
             }
 
 
-            public async void Retrieve_User_Files_Information(string result, object obj)
+            public async void Retrieve_User_Files_Information_Result_Processing(string result, object obj)
             {
 
                 if (result != INotification_Messages.connection_failed_message && result != INotification_Messages.log_in_session_key_invalid)
@@ -250,9 +261,10 @@ namespace Omega_Drive_Client
                         Thickness forty_left_thickness = new Thickness(40, 0, 0, 0);
                         Thickness thirrty_left_thickness = new Thickness(40, 0, 0, 0);
                         Thickness ten_left_thickness = new Thickness(10, 0, 0, 0);
+                        Thickness ten_up_thickness = new Thickness(0, 10, 0, 0);
 
 
-
+                        file_structure_info.Clear();
 
                         ((MainWindow)obj).User_Files_StackPanel.BeginInit();
 
@@ -277,6 +289,8 @@ namespace Omega_Drive_Client
                             element.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
                             element.Orientation = Avalonia.Layout.Orientation.Horizontal;
                             element.Background = Brushes.Black;
+                            element.Margin = ten_up_thickness;
+                            element.Width = ((MainWindow)obj).Download_Stackpanel.Width;
 
 
 
@@ -286,13 +300,14 @@ namespace Omega_Drive_Client
 
                             TextBox filename_textbox = new TextBox();
                             filename_textbox.BorderBrush = Brushes.Black;
-                            filename_textbox.Classes = Classes.Parse("Border");
+                            filename_textbox.Classes = Classes.Parse("Inivisible_Border");
                             filename_textbox.Width = 200;
                             filename_textbox.Text = Encoding.UTF8.GetString(user_Files_Info.FILE_NAMES[index]);
                             filename_textbox.IsReadOnly = true;
                             filename_textbox.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
                             filename_textbox.Background = Brushes.Black;
-                            filename_textbox.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#43D3F7");
+                            filename_textbox.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#3490D1");
+                            filename_textbox.Name = user_Files_Info.FILE_IDS[index].ToString() + "_file_name";
 
                             element.Children.Add(filename_textbox);
 
@@ -351,6 +366,11 @@ namespace Omega_Drive_Client
                             file_download_button.Name = user_Files_Info.FILE_IDS[index].ToString() + "_download";
                             file_download_button.Click += File_download_button_Click;
 
+                            lock(file_structure_info)
+                            {
+                                file_structure_info.Add(user_Files_Info.FILE_IDS[index], user_Files_Info.IS_DIRECTORY[index]);
+                            }
+                            
                             element.Children.Add(file_download_button);
 
 
@@ -373,15 +393,77 @@ namespace Omega_Drive_Client
 
                         }
 
-                       ((MainWindow)obj).User_Files_StackPanel.EndInit();
+                        ((MainWindow)obj).User_Files_StackPanel.EndInit();
+
+                        Current_Main_Window_Instance = ((MainWindow)obj);
 
                     }
                     catch
                     {
 
                     }
+                }
+                else
+                {
+                    Notification_Window notification_Window = new Notification_Window(result);
+                    await notification_Window.ShowDialog(((MainWindow)obj));
+                }
+            }
+
+            public async void User_File_Download_Result_Porcessing(string result, object obj)
+            {
+                Tuple<string, object> Object = (Tuple<string, object>)obj;
 
 
+                if (Encoding.UTF8.GetString(Convert.FromBase64String(result)) != INotification_Messages.connection_failed_message)
+                {
+                    OpenFolderDialog save_the_file = new OpenFolderDialog();
+
+                    string save_file_path = await save_the_file.ShowAsync((MainWindow)Object.Item2);
+
+                    if (save_file_path != null)
+                    {
+                        StringBuilder file_path_builder = new StringBuilder();
+
+                        file_path_builder.Append(save_file_path);
+
+                        if (System.OperatingSystem.IsWindows() == true)
+                        {
+                            file_path_builder.Append("\\");
+                        }
+                        else
+                        {
+                            file_path_builder.Append("/");
+                        }
+
+                        file_path_builder.Append(Object.Item1);
+
+                        System.IO.FileStream fs = System.IO.File.Create(file_path_builder.ToString());
+
+                        try
+                        {
+                            await fs.WriteAsync(Convert.FromBase64String(result));
+
+                            await fs.FlushAsync();
+                        }
+                        catch
+                        {
+
+                        }
+                        finally
+                        {
+                            if (fs != null)
+                            {
+                                fs.Close();
+                                await fs.DisposeAsync();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Notification_Window notification_Window = new Notification_Window(Encoding.UTF8.GetString(Convert.FromBase64String(result)));
+                    await notification_Window.ShowDialog((MainWindow)Object.Item2);
                 }
             }
 
@@ -390,13 +472,47 @@ namespace Omega_Drive_Client
                 StringBuilder file_id_builder = new StringBuilder(((Button)sender).Name);
                 file_id_builder.Remove(file_id_builder.Length - "_delete".Length, "_delete".Length);
 
-                await Server_Connections.Secure_Server_Connections("Delete user file", log_in_session_key, Encoding.UTF8.GetBytes(file_id_builder.ToString()));
+                Load_User_Files_Delegate load_User_Files_Delegate = new Load_User_Files_Delegate(Current_Main_Window_Instance.Delete_User_Files_Implementor);
+                load_User_Files_Delegate.Invoke(log_in_session_key, Encoding.UTF8.GetBytes(file_id_builder.ToString()));
             }
 
             private void File_download_button_Click(object? sender, RoutedEventArgs e)
             {
                 StringBuilder file_id_builder = new StringBuilder(((Button)sender).Name);
                 file_id_builder.Remove(file_id_builder.Length - "_download".Length, "_download".Length);
+
+
+                bool is_directory = false;
+                file_structure_info.TryGetValue(Convert.ToInt64(file_id_builder.ToString()),out is_directory);
+
+
+                List<IControl> stackpanel_elements = Current_Main_Window_Instance.User_Files_StackPanel.Children.ToList();
+
+                for (int index = 0; index < stackpanel_elements.Count; index++)
+                {
+                    List<IControl> current_element = ((StackPanel)stackpanel_elements[index]).Children.ToList();
+
+                    StringBuilder file_name_builder = new StringBuilder(((TextBox)current_element[0]).Name);
+                    file_name_builder.Remove(file_name_builder.Length - "_file_name".Length, "_file_name".Length);
+
+
+                    if (file_name_builder.ToString() == file_id_builder.ToString())
+                    {
+                        if (is_directory == true)
+                        {
+                           
+                        }
+                        else
+                        {
+                            Download_User_Files_Delegate download_User_Files_Delegate = new Download_User_Files_Delegate(Current_Main_Window_Instance.Download_User_Files_Implementor);
+                            download_User_Files_Delegate.Invoke(log_in_session_key, ((TextBox)current_element[0]).Text, Encoding.UTF8.GetBytes(file_id_builder.ToString()));
+                            break;
+                        }
+                    }
+                }
+
+
+
             }
         }
 
@@ -424,7 +540,8 @@ namespace Omega_Drive_Client
             Authentificate_Account,
             LoadSslCertificate,
             Log_in_Session_Key_Verification,
-            User_Files_Information_Retrieval
+            User_Files_Information_Retrieval,
+            User_File_Download
         }
 
 
@@ -532,6 +649,14 @@ namespace Omega_Drive_Client
                 {
                     Notification_Messages_Processing_Object.Log_Out_Result_Processing(result, obj);
                 }
+                else if (option == Selected_Function.Authentificate_Account)
+                {
+                    Notification_Messages_Processing_Object.Password_Window_Account_Authentification_Result_Processing(result, obj);
+                }
+                else if (option == Selected_Function.Log_in_Session_Key_Verification)
+                {
+                    Notification_Messages_Processing_Object.Log_In_Session_Key_Verification_Result_Processing(result, obj);
+                }
                 else if (option == Selected_Function.Register)
                 {
                     Notification_Messages_Processing_Object.Register_Result_Processing(result, obj);
@@ -546,39 +671,15 @@ namespace Omega_Drive_Client
                 }
                 else if (option == Selected_Function.User_Files_Information_Retrieval)
                 {
-                    Notification_Messages_Processing_Object.Retrieve_User_Files_Information(result, obj);
+                    Notification_Messages_Processing_Object.Retrieve_User_Files_Information_Result_Processing(result, obj);
                 }
-
-            }, Avalonia.Threading.DispatcherPriority.Background);
-        }
-
-
-        internal static void Function_Result_Processing(Selected_Function option, string result, Tuple<object, object> obj)
-        {
-            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-            {
-                if(option == Selected_Function.Authentificate_Account)
+                else if(option == Selected_Function.User_File_Download)
                 {
-                    Notification_Messages_Processing_Object.Password_Window_Account_Authentification_Result_Processing(result, obj);
+                    Notification_Messages_Processing_Object.User_File_Download_Result_Porcessing(result, obj);
                 }
 
             }, Avalonia.Threading.DispatcherPriority.Background);
         }
-
-
-        internal static void Function_Result_Processing(Selected_Function option, string result, string retrieved_log_in_session_key, object obj)
-        {
-            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-            {
-                if (option == Selected_Function.Log_in_Session_Key_Verification)
-
-                {
-                    Notification_Messages_Processing_Object.Log_In_Session_Key_Verification_Result_Processing(result, retrieved_log_in_session_key, obj);
-                }
-
-            }, Avalonia.Threading.DispatcherPriority.Background);
-        }
-
 
 
 
@@ -620,7 +721,6 @@ namespace Omega_Drive_Client
                 Get_And_Set_Current_Protocol();
 
                 byte[] json_formated_settings = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(application_Settings, Newtonsoft.Json.Formatting.Indented));
-
                 System.IO.FileStream settings_file_stream = System.IO.File.Create(file_name, json_formated_settings.Length, System.IO.FileOptions.Asynchronous);
 
                 try
@@ -649,6 +749,10 @@ namespace Omega_Drive_Client
 
             return true;
         }
+
+
+
+
 
         private static async Task<bool> Read_Application_Settings_File()
         {

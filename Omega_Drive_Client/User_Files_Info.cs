@@ -12,5 +12,6 @@ namespace Omega_Drive_Client
         public byte[][] FILE_NAMES;
         public int[] FILE_SIZES;
         public byte[][] FILE_UPLOAD_DATES;
+        public bool[] IS_DIRECTORY;
     }
 }

@@ -86,24 +86,10 @@ namespace Omega_Drive_Client
             Main_Menu_Opened_Or_Closed++;
         }
 
-        private async void Open_The_File_Download_Section(object sender, RoutedEventArgs e)
+        private async void Open_The_File_Upload_Section(object sender, RoutedEventArgs e)
         {
-            Download_Stackpanel.IsVisible = true;
-            Download_Stackpanel.IsEnabled = true;
-
-            Upload_Stackpanel.IsVisible = false;
-            Upload_Stackpanel.IsEnabled = false;
-
-            await Load_User_Files();
-        }
-
-        private void Open_The_File_Upload_Section(object sender, RoutedEventArgs e)
-        {
-            Upload_Stackpanel.IsVisible = true;
-            Upload_Stackpanel.IsEnabled = true;
-
-            Download_Stackpanel.IsVisible = false;
-            Download_Stackpanel.IsEnabled = false;
+            File_Upload_Window file_Upload_Window = new File_Upload_Window();
+            await file_Upload_Window.ShowDialog(this);
         }
 
         private async void Open_The_Settings_Menu(object sender, RoutedEventArgs e)
@@ -112,19 +98,48 @@ namespace Omega_Drive_Client
             await settings.ShowDialog(this);
         }
 
+        private async void Refresh_The_Page(object sender, RoutedEventArgs e)
+        {
+            await Load_User_Files();
+        }
+
         private async void Log_Out(object sender, RoutedEventArgs e)
         {
             string result = Encoding.UTF8.GetString(await Server_Connections.Secure_Server_Connections("Log out", Client_Application_Variables.log_in_session_key, null));
             Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Log_Out, result, this);
         }
 
+
+
         private async Task<bool> Load_User_Files()
         {
             string result = Encoding.UTF8.GetString(await Server_Connections.Secure_Server_Connections("Retrieve user files data", Client_Application_Variables.log_in_session_key, null));
-            Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.User_Files_Information_Retrieval, result, this);
             System.Diagnostics.Debug.WriteLine("Result: " + result);
+            Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.User_Files_Information_Retrieval, result, this);
             return true;
         }
+
+
+
+        public async void Delete_User_Files_Implementor(string log_in_session_key, byte[] file_id)
+        {
+            await Server_Connections.Secure_Server_Connections("Delete user file", log_in_session_key, file_id);
+            await Load_User_Files();
+        }
+
+
+        public async void Download_User_Files_Implementor(string log_in_session_key, string file_name, byte[] file_id)
+        {
+            string result = Convert.ToBase64String(await Server_Connections.Secure_Server_Connections("Download user file", log_in_session_key, file_id));
+            Client_Application_Variables.Function_Result_Processing(Selected_Function.User_File_Download, result, new Tuple<string, object>(file_name, this));
+            
+        }
+
+
+
+
+
+
 
         private void Animation_Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
@@ -133,7 +148,10 @@ namespace Omega_Drive_Client
 
                 if (Expand_The_Menu_Label == true)
                 {
-                    Menu_TextBlock.Width += 10;
+                    if(Menu_TextBlock.Width < 100)
+                    {
+                        Menu_TextBlock.Width += 10;
+                    }
                 }
                 else
                 {

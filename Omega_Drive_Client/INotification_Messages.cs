@@ -58,14 +58,16 @@ namespace Omega_Drive_Client
 
         public void Account_Validation_Result_Processing(string result, object obj);
 
-        public void Password_Window_Account_Authentification_Result_Processing(string result, Tuple<object, object> obj);
+        public void Password_Window_Account_Authentification_Result_Processing(string result, object obj);
 
         public void Log_In_Or_Register_Window_Account_Authentification_Result_Processing(string result, object obj);
 
-        public void Log_In_Session_Key_Verification_Result_Processing(string result, string retrieved_log_in_session_key, object obj);
+        public void Log_In_Session_Key_Verification_Result_Processing(string result, object obj);
 
         public void Log_Out_Result_Processing(string result, object obj);
 
-        public void Retrieve_User_Files_Information(string result, object obj);
+        public void Retrieve_User_Files_Information_Result_Processing(string result, object obj);
+
+        public void User_File_Download_Result_Porcessing(string result, object obj);
     }
 }
