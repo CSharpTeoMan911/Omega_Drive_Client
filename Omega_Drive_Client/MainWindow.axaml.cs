@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -136,8 +137,10 @@ namespace Omega_Drive_Client
         }
 
 
-
-
+        public MainWindow Return_Current_Instace()
+        {
+            return this;
+        }
 
 
 

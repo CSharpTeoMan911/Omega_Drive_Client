@@ -172,7 +172,7 @@
 				</Button.Content>
 			</Button>
 
-			<TextBlock Name="Menu_TextBlock" Width="0" Margin="10,20,0,0" VerticalAlignment="Top" Foreground="#3490D1" FontSize="25" FontWeight="Bold" Text="Menu"/>
+			<TextBlock Name="Menu_TextBlock" Width="0" Margin="10,22,0,0" VerticalAlignment="Top" Foreground="#3490D1" FontSize="27" FontWeight="Bold" Text="Menu"/>
 
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Top"  Margin="0,15,0,0" >
 

@@ -27,11 +27,6 @@ namespace Omega_Drive_Client
 
         private static Application_Settings application_Settings = new Application_Settings();
 
-        private static Server_Connections Server_Connections = new Server_Connections();
-
-        private static MainWindow Current_Main_Window_Instance = new MainWindow();
-
-
 
 
         protected static System.Net.IPAddress ip_address = System.Net.IPAddress.Parse("127.0.0.1");
@@ -50,6 +45,10 @@ namespace Omega_Drive_Client
 
 
         private delegate void Open_Log_In_Pannel();
+
+        private delegate MainWindow Get_Current_MainWidow_Instance();
+
+        private static Get_Current_MainWidow_Instance get_current_mainwindow_instace;
 
         private delegate void Load_User_Files_Delegate(string log_in_session_key, byte[] file_id);
 
@@ -395,7 +394,7 @@ namespace Omega_Drive_Client
 
                         ((MainWindow)obj).User_Files_StackPanel.EndInit();
 
-                        Current_Main_Window_Instance = ((MainWindow)obj);
+                        get_current_mainwindow_instace = new Get_Current_MainWidow_Instance(((MainWindow)obj).Return_Current_Instace);
 
                     }
                     catch
@@ -472,7 +471,7 @@ namespace Omega_Drive_Client
                 StringBuilder file_id_builder = new StringBuilder(((Button)sender).Name);
                 file_id_builder.Remove(file_id_builder.Length - "_delete".Length, "_delete".Length);
 
-                Load_User_Files_Delegate load_User_Files_Delegate = new Load_User_Files_Delegate(Current_Main_Window_Instance.Delete_User_Files_Implementor);
+                Load_User_Files_Delegate load_User_Files_Delegate = new Load_User_Files_Delegate(get_current_mainwindow_instace.Invoke().Delete_User_Files_Implementor);
                 load_User_Files_Delegate.Invoke(log_in_session_key, Encoding.UTF8.GetBytes(file_id_builder.ToString()));
             }
 
@@ -486,7 +485,7 @@ namespace Omega_Drive_Client
                 file_structure_info.TryGetValue(Convert.ToInt64(file_id_builder.ToString()),out is_directory);
 
 
-                List<IControl> stackpanel_elements = Current_Main_Window_Instance.User_Files_StackPanel.Children.ToList();
+                List<IControl> stackpanel_elements = get_current_mainwindow_instace.Invoke().User_Files_StackPanel.Children.ToList();
 
                 for (int index = 0; index < stackpanel_elements.Count; index++)
                 {
@@ -504,7 +503,7 @@ namespace Omega_Drive_Client
                         }
                         else
                         {
-                            Download_User_Files_Delegate download_User_Files_Delegate = new Download_User_Files_Delegate(Current_Main_Window_Instance.Download_User_Files_Implementor);
+                            Download_User_Files_Delegate download_User_Files_Delegate = new Download_User_Files_Delegate(get_current_mainwindow_instace.Invoke().Download_User_Files_Implementor);
                             download_User_Files_Delegate.Invoke(log_in_session_key, ((TextBox)current_element[0]).Text, Encoding.UTF8.GetBytes(file_id_builder.ToString()));
                             break;
                         }

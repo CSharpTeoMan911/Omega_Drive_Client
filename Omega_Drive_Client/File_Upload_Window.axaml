@@ -82,11 +82,11 @@ or folder
 		<StackPanel Margin="0,0,0,20" Grid.RowSpan="9" Grid.ColumnSpan="9" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 			
 			<StackPanel Orientation="Horizontal">
-				<Button Classes="Blue_Thin_Border" Margin="0,0,30,0">
+				<Button Classes="Blue_Thin_Border" Margin="0,0,30,0" Click="Upload_File">
 					<Image Height="35" Source="/Assets/Upload_File.png"/>
 				</Button>
 
-				<Button Classes="Blue_Thin_Border">
+				<Button Classes="Blue_Thin_Border" Click="Upload_Folder">
 					<Image Height="35" Source="/Assets/Upload_Folder.png"/>
 				</Button>
 			</StackPanel>
