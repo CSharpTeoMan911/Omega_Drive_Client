@@ -26,6 +26,7 @@ namespace Omega_Drive_Client
         public static string log_in_session_key_is_valid = "Log in session key is valid";
         public static string error_loading_user_cache = "Error loading user cache";
         protected static string log_in_session_key_invalid = "Log in session key is invalid";
+        protected static string user_file_upload_successful = "User file upload successful";
 
 
 
@@ -43,7 +44,7 @@ namespace Omega_Drive_Client
             {account_registration_successful, "Check your account validation code sent to this account's email address and log in."},
             {account_validation_successful, "Account validation is successful, please log in into your account."},
             {invalid_ssl_certificate_password, "The password provided for the certificate is invalid."},
-            {ssl_certificate_loadup_successful, "The certificate was added successfuly to the user's certificate store."}
+            {ssl_certificate_loadup_successful, "The certificate was added successfuly to the user's certificate store."},
         };
 
       
@@ -69,5 +70,7 @@ namespace Omega_Drive_Client
         public void Retrieve_User_Files_Information_Result_Processing(string result, object obj);
 
         public void User_File_Download_Result_Porcessing(string result, object obj);
+
+        public void User_File_Upload_Result_Porcessing(string result, object obj);
     }
 }

@@ -106,7 +106,7 @@ namespace Omega_Drive_Client
 
         private async void Log_Out(object sender, RoutedEventArgs e)
         {
-            string result = Encoding.UTF8.GetString(await Server_Connections.Secure_Server_Connections("Log out", Client_Application_Variables.log_in_session_key, null));
+            string result = Encoding.UTF8.GetString(await Server_Connections.Secure_Server_Connections("Log out", Client_Application_Variables.Get_Log_In_Session_Key(), null));
             Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.Log_Out, result, this);
         }
 
@@ -114,7 +114,7 @@ namespace Omega_Drive_Client
 
         private async Task<bool> Load_User_Files()
         {
-            string result = Encoding.UTF8.GetString(await Server_Connections.Secure_Server_Connections("Retrieve user files data", Client_Application_Variables.log_in_session_key, null));
+            string result = Encoding.UTF8.GetString(await Server_Connections.Secure_Server_Connections("Retrieve user files data", Client_Application_Variables.Get_Log_In_Session_Key(), null));
             System.Diagnostics.Debug.WriteLine("Result: " + result);
             Client_Application_Variables.Function_Result_Processing(Client_Application_Variables.Selected_Function.User_Files_Information_Retrieval, result, this);
             return true;

@@ -14,7 +14,7 @@ namespace Omega_Drive_Client
     {
         private static Notification_Messages_Processing Notification_Messages_Processing_Object = new Notification_Messages_Processing();
 
-        internal static string log_in_session_key;
+        private static string log_in_session_key;
 
         private static string file_name = "app_settings.json";
 
@@ -466,6 +466,11 @@ namespace Omega_Drive_Client
                 }
             }
 
+            public async void User_File_Upload_Result_Porcessing(string result, object obj)
+            {
+
+            }
+
             private async void File_delete_button_Click(object? sender, RoutedEventArgs e)
             {
                 StringBuilder file_id_builder = new StringBuilder(((Button)sender).Name);
@@ -540,7 +545,8 @@ namespace Omega_Drive_Client
             LoadSslCertificate,
             Log_in_Session_Key_Verification,
             User_Files_Information_Retrieval,
-            User_File_Download
+            User_File_Download,
+            User_File_Upload
         }
 
 
@@ -581,6 +587,11 @@ namespace Omega_Drive_Client
         internal static void Set_Keep_User_Logged_In(bool is_kept_logged_in)
         {
             keep_user_logged_in = is_kept_logged_in;
+        }
+
+        internal static string Get_Log_In_Session_Key()
+        {
+            return log_in_session_key;
         }
 
 
@@ -675,6 +686,10 @@ namespace Omega_Drive_Client
                 else if(option == Selected_Function.User_File_Download)
                 {
                     Notification_Messages_Processing_Object.User_File_Download_Result_Porcessing(result, obj);
+                }
+                else if(option == Selected_Function.User_File_Upload)
+                {
+                    Notification_Messages_Processing_Object.User_File_Upload_Result_Porcessing(result, obj);
                 }
 
             }, Avalonia.Threading.DispatcherPriority.Background);
